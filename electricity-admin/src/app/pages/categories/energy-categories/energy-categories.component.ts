@@ -159,7 +159,7 @@ export class EnergyCategoriesComponent implements OnInit {
           );
           this.cancelDelete();
         } else {
-          alert(res.message || "Delete failed");
+          alert(res.errMessage || "Delete failed");
           this.cancelDelete();
         }
       },

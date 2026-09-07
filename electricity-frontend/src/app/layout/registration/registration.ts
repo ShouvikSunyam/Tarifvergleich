@@ -269,6 +269,9 @@ export class Registration implements OnInit {
 
   selectDay(day: any): void {
     this.selectedDay = day;
+    if (this.selectedTimeSlot && !this.isTimeSlotEnabled(this.selectedTimeSlot)) {
+      this.selectedTimeSlot = '';
+    }
     this.cdr.detectChanges();
   }
 

@@ -7,8 +7,8 @@ import { Observable, shareReplay, map } from 'rxjs';
 })
 export class StaticContentService {
 
-  private readonly API_URL = 'http://localhost:8080/api/static-content/all';
-  private readonly BASE_IMAGE_URL = 'http://localhost:8080/assets/super-admin/';
+  private readonly API_URL = 'http://192.168.0.155:8080/api/static-content/all';
+  private readonly BASE_IMAGE_URL = 'http://192.168.0.155:8080/assets/super-admin/';
 
   private data$: Observable<any>;
 
@@ -32,6 +32,6 @@ export class StaticContentService {
     if (!contentUrl) return '';
     console.log(this.BASE_IMAGE_URL + contentUrl);
     
-    return `http://localhost:8080/assets/super-admin/${contentUrl}`;
+    return `http://192.168.0.155:8080/assets/super-admin/${contentUrl}`;
   }
 }

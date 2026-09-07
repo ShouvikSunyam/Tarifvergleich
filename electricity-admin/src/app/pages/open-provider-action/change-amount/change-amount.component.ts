@@ -1,38 +1,38 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { CommonModule, NgClass } from "@angular/common";
 import { ApiService } from "../../../shared/services/api.service";
 import { Router } from "@angular/router";
-import { HttpClient } from "@angular/common/http";
+
 import { FormsModule } from "@angular/forms";
 import { Subject, Subscription } from "rxjs";
 import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 
-export interface CustomerInvoiceRequest {
+export interface CustomerChangePayment {
   id?: number;
   salutation?: string;
   customerName?: string;
   customerEmail?: string;
-  message?: string;
-  deliveryId?: number;
-  orderId?: number;
-  connectionId?: number;
-  invoiceCategory?: string;
+  newAdvanceAmount?: string;
+  reason?: string;
+  deliveryId?: { deliveryId?: number; uniqueDeliveryId?: string };
   status?: number;
-  createdAt?: string;
-  bookingId?: number;
-  bookingStatus?: string;
+  createdAt?: number;
   bookingCreatedOn?: number;
+  isExpired?: boolean;
+  signedFileUrl?: string;
+  adminPlacedOrder?: boolean;
+  bookingOrderId?: number;
 }
 
 @Component({
-  selector: "app-customer-invoice-request",
+  selector: "app-change-amount",
   imports: [CommonModule, NgClass, FormsModule],
-  standalone: true,
-  templateUrl: "./customer-invoice-request.component.html",
-  styleUrl: "./customer-invoice-request.component.css",
+  templateUrl: "./change-amount.component.html",
+  styleUrl: "./change-amount.component.css",
 })
-export class CustomerInvoiceRequestComponent implements OnInit, OnDestroy {
-  customerInvoiceRequests: CustomerInvoiceRequest[] = [];
+export class ChangeAmountComponent {
+  customerChangePayment: CustomerChangePayment[] = [];
 
   isLoading = false;
   errorMessage = "";
@@ -62,10 +62,10 @@ export class CustomerInvoiceRequestComponent implements OnInit, OnDestroy {
     this.searchSub = this.searchTerm$
       .pipe(debounceTime(350), distinctUntilChanged())
       .subscribe(() => {
-        this.fetchCustomerInvoiceRequests();
+        this.fetchCustomerChangePayment();
       });
 
-    this.fetchCustomerInvoiceRequests();
+    this.fetchCustomerChangePayment();
   }
 
   ngOnDestroy(): void {
@@ -85,57 +85,71 @@ export class CustomerInvoiceRequestComponent implements OnInit, OnDestroy {
     this.searchTerm$.next("");
   }
 
-  fetchCustomerInvoiceRequests(): void {
+  fetchCustomerChangePayment(): void {
     this.isLoading = true;
     this.errorMessage = "";
-
     this.closeSidebar();
+
     const payload = {
       search: this.searchTerm?.trim() || "",
+      adminId: 1,
+      page: 1,
     };
-    this.http
-      .post("http://192.168.0.155:8080/admin/customer-invoice-request", payload)
 
+    this.http
+      .post(
+        "http://192.168.0.155:8080/admin/fetch-all-customer-discount-request",
+        payload,
+      )
       .subscribe({
         next: (res: any) => {
           this.isLoading = false;
 
-          const data = Array.isArray(res)
-            ? res
-            : Array.isArray(res?.data)
-              ? res.data
-              : [];
-          this.customerInvoiceRequests = data;
+          const items = Array.isArray(res?.data) ? res.data : [];
+
+          this.customerChangePayment = items.map((item: any) => {
+            const detail = item.customerDetails;
+            const order = detail?.order;
+
+            return {
+              id: item.customerChangeDiscountId,
+              salutation: detail?.title,
+              customerName:
+                `${detail?.firstName ?? ""} ${detail?.lastName ?? ""}`.trim(),
+              customerEmail: detail?.email,
+              newAdvanceAmount: item.newAdvanceAmount,
+              reason: item.reason,
+              status: item.status,
+              createdAt: item.createdOn,
+              deliveryId: {
+                deliveryId: detail?.deliveryId,
+                uniqueDeliveryId: detail?.uniqueDeliveryId,
+              },
+              bookingCreatedOn: order?.adminOrderPlacedOn,
+              isExpired: order?.isExpired,
+              signedFileUrl: order?.doc?.signedFileUrl,
+              adminPlacedOrder: order?.adminPlacedOrder,
+              bookingOrderId: order?.orderId,
+            };
+          });
         },
 
         error: (err: any) => {
           this.isLoading = false;
-          this.errorMessage = "Fehler beim Laden der Messwertmeldungen";
-
+          this.errorMessage = "Fehler beim Laden der Anfragen";
           console.error(err);
         },
       });
   }
 
-  trackById(index: number, item: CustomerInvoiceRequest): number {
+  trackById(index: number, item: CustomerChangePayment): number {
     return item.id ?? index;
   }
 
-  formatDate(date?: string): string {
-    if (!date) return "—";
-    return new Intl.DateTimeFormat("de-DE", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(date));
-  }
-  formatDate2(timestamp: number | string | Date): string {
+  formatDate(timestamp?: number | string): string {
     if (!timestamp) return "—";
 
     let date: Date;
-
     if (typeof timestamp === "number") {
       date =
         timestamp.toString().length === 10
@@ -147,16 +161,17 @@ export class CustomerInvoiceRequestComponent implements OnInit, OnDestroy {
 
     if (isNaN(date.getTime())) return "—";
 
-    return date.toLocaleDateString("de-DE", {
+    return new Intl.DateTimeFormat("de-DE", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    });
+    }).format(date);
   }
+
   getActiveCount(): number {
-    return this.customerInvoiceRequests.filter((item) => item.status === 1)
+    return this.customerChangePayment.filter((item) => item.status === 1)
       .length;
   }
 
@@ -167,21 +182,25 @@ export class CustomerInvoiceRequestComponent implements OnInit, OnDestroy {
     );
   }
 
-  openDetail(request: CustomerInvoiceRequest): void {
+  openDetail(request: CustomerChangePayment): void {
     console.log(request);
   }
 
-  openSidebar(request: CustomerInvoiceRequest): void {
+  selectedIndex: number | null = null;
+
+  openSidebar(request: CustomerChangePayment, index: number): void {
     if (this.isSidebarOpen && this.selectedRequest?.id === request.id) {
       this.closeSidebar();
       return;
     }
     this.selectedRequest = request;
+    this.selectedIndex = index;
     this.isSidebarOpen = true;
   }
 
   closeSidebar(): void {
     this.selectedRequest = null;
+    this.selectedIndex = null;
     this.isSidebarOpen = false;
   }
 
@@ -193,7 +212,7 @@ export class CustomerInvoiceRequestComponent implements OnInit, OnDestroy {
     if (!deliveryId) {
       return;
     }
-    // window.open(`/bookings/${deliveryId}`, '_blank');
+    // window.open(`/bookings/${deliveryId}`, "_blank");
     window.location.href = `/bookings/${deliveryId}`;
   }
 

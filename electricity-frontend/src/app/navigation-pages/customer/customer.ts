@@ -169,6 +169,11 @@ export class Customer {
       this.checkAttorneyStatus();
     }
     this.redirectToMeter = false;
+    this.submittedDiscountRequest = false;
+    this.submittedEnergyMessage = false;
+    this.submittedCallback = false;
+    this.submittedInvoice = false;
+    this.submittedReportMeterReading = false;
     this.supplierMessageCategory = 0;
     this.cdr.detectChanges();
   }
@@ -893,11 +898,11 @@ export class Customer {
     const status = item?.reportMeterReadings?.[0]?.status;
 
     if (status === 1) {
-      return 'In Progress';
+      return 'Im Gange';
     }
 
     if (status === 2) {
-      return 'Forwarded';
+      return 'Weitergeleitet';
     }
 
     return '';
@@ -955,11 +960,11 @@ export class Customer {
     const status = item?.invoiceRequests?.[0]?.status || '';
 
     if (status === 1) {
-      return 'In Progress';
+      return 'Im Gange';
     }
 
     if (status === 2) {
-      return 'Forwarded';
+      return 'Weitergeleitet';
     }
 
     return '';
@@ -1055,7 +1060,18 @@ export class Customer {
       },
     });
   }
+  resetCallbackForm(): void {
+    this.selectedDay = null;
+    this.selectedTimeSlot = '';
 
+    this.phoneNumber = '';
+    this.scheduleDescription = '';
+
+    this.scheduleSuccessMessage = '';
+    this.scheduleErrorMessage = '';
+
+    this.fieldErrors = {};
+  }
   get enabledDays(): Set<string> {
     const now = new Date();
 
@@ -1299,6 +1315,9 @@ export class Customer {
 
   selectDay(day: any): void {
     this.selectedDay = day;
+    if (this.selectedTimeSlot && !this.isTimeSlotEnabled(this.selectedTimeSlot)) {
+      this.selectedTimeSlot = '';
+    }
     this.cdr.detectChanges();
   }
 
@@ -1535,6 +1554,7 @@ export class Customer {
       this.selectedIndex = index;
 
       console.log('Selected Card:', this.cards[index]);
+      this.resetCallbackForm();
 
       this.redirectToMeter = true;
       this.cdr.detectChanges();
@@ -1595,11 +1615,11 @@ export class Customer {
     const status = Number(item?.supplierMessage?.[0]?.status);
 
     if (status === 0) {
-      return 'In Progress';
+      return 'Im Gange';
     }
 
     if (status === 1) {
-      return 'Forwarded';
+      return 'Weitergeleitet';
     }
 
     return '';
@@ -1824,11 +1844,11 @@ export class Customer {
     const status = item?.discountRequests?.[0]?.status;
 
     if (status === 0) {
-      return 'In Progress';
+      return 'Im Gange';
     }
 
     if (status === 1) {
-      return 'Forwarded';
+      return 'Weitergeleitet';
     }
 
     return '';
@@ -2690,6 +2710,7 @@ export class Customer {
       this.fetchServiceCount();
       this.fetchAllRequests();
     }
+    this.redirectToMeter = false;
     this.resetForm();
     this.cdr.detectChanges();
   }

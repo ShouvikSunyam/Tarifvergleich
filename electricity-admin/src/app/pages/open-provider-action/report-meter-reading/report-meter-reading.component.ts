@@ -150,6 +150,31 @@ export class ReportMeterReadingComponent implements OnInit {
     }).format(new Date(date));
   }
 
+   formatDate2(timestamp: number | string | Date): string {
+    if (!timestamp) return "—";
+
+    let date: Date;
+
+    if (typeof timestamp === "number") {
+      date =
+        timestamp.toString().length === 10
+          ? new Date(timestamp * 1000)
+          : new Date(timestamp);
+    } else {
+      date = new Date(timestamp);
+    }
+
+    if (isNaN(date.getTime())) return "—";
+
+    return date.toLocaleDateString("de-DE", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+  
   getActiveCount(): number {
     return this.reportMeterReadings.filter(
       item => item.status === 1
