@@ -16,12 +16,16 @@ public interface CustomerInvoiceRequestRepository extends JpaRepository<Customer
 	List<CustomerInvoiceRequest> findByDeliveryIdIn(List<Integer> deliveryIds);
 
 	@Query(value = "SELECT cir.* FROM customer_invoice_request cir"
-			+ " LEFT JOIN customer c ON cir.customer_id = c.customer_id"
-			+ " WHERE LOWER(cir.invoice_category) LIKE LOWER(CONCAT('%', :search, '%'))"
+			+ " LEFT JOIN customer c ON cir.customer_id = c.customer_id "
+			+ " LEFT JOIN energy_supplier_invoice_categories ic ON cir.id = ic.energy_supplier_invoice_category_id "
+			+ " WHERE LOWER(ic.category_name) LIKE LOWER(CONCAT('%', :search, '%'))"
 			+ " OR LOWER(cir.message) LIKE LOWER(CONCAT('%', :search, '%'))"
 			+ " OR LOWER(c.first_name) LIKE LOWER(CONCAT('%', :search, '%'))"
 			+ " OR LOWER(c.last_name) LIKE LOWER(CONCAT('%', :search, '%'))"
 			+ " OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%'))"
+			+ " ORDER BY cir.id DESC"
 			, nativeQuery = true)
 	List<CustomerInvoiceRequest> searchInvoiceRequests(@Param("search") String search);
+	
+	List<CustomerInvoiceRequest> findAllByOrderByIdDesc();
 }

@@ -2,11 +2,16 @@ package com.tarifvergleich.electricity.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,7 +41,10 @@ public class CustomerInvoiceRequest {
     
     private Integer deliveryId;
 
-    private String invoiceCategory;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "energy_supplier_invoice_category_id")
+    @JsonIgnore
+    private EnergySupplierInvoiceCategory energySupplierInvoiceCategory;
 
     @Column(columnDefinition = "TEXT")
     private String message;

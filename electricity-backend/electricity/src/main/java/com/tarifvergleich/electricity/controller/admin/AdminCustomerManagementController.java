@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarifvergleich.electricity.dto.CustomerAttornyDto;
+import com.tarifvergleich.electricity.dto.CustomerChangeDiscountRequestDto;
 import com.tarifvergleich.electricity.dto.CustomerConnectionRequestDto;
 import com.tarifvergleich.electricity.dto.CustomerDeliveryDto;
 import com.tarifvergleich.electricity.dto.CustomerDeliveryRequestWrapper.AdminEditCustomerDeliveryRelated;
@@ -24,11 +26,12 @@ import com.tarifvergleich.electricity.dto.CustomerOrderDto;
 import com.tarifvergleich.electricity.dto.CustomerSendEmailRequestDto;
 import com.tarifvergleich.electricity.dto.CustomerServiceRequestDto;
 import com.tarifvergleich.electricity.dto.CustomerServicesDto;
+import com.tarifvergleich.electricity.dto.EnergySupplierMessageDto;
 import com.tarifvergleich.electricity.service.admin.AdminCustomerDeliveryManagementService;
 import com.tarifvergleich.electricity.service.admin.AdminCustomerManagementService;
+import com.tarifvergleich.electricity.service.admin.AdminCustomerRequestManagementService;
 import com.tarifvergleich.electricity.service.admin.AdminServicePointManagementService;
 import com.tarifvergleich.electricity.service.customer.CustomerDetailService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,6 +48,7 @@ public class AdminCustomerManagementController {
 	private final AdminServicePointManagementService servicePointManagementService;
 	private final CustomerDetailService customerDetailService;
 	private final AdminCustomerDeliveryManagementService adminCustomerDeliveryManagementService;
+	private final AdminCustomerRequestManagementService adminCustomerRequestManagementService;
 	private final ObjectMapper objectMapper;
 
 	@Operation(summary = "Fetch customer", description = "Returns a list of customer with there details")
@@ -206,5 +210,18 @@ public class AdminCustomerManagementController {
 			throws Exception {
 		CustomerSendEmailRequestDto request = objectMapper.readValue(jsonData, CustomerSendEmailRequestDto.class);
 		return ResponseEntity.ok(adminCustomerManagementService.sendCustomerEmail(request, uploadDocuments));
+	}
+
+	@PostMapping("/fetch-all-supplier-message")
+	public ResponseEntity<?> fetchAllSupploerMessage(@RequestBody EnergySupplierMessageDto supplierMessageDto) {
+		return ResponseEntity
+				.ok(adminCustomerDeliveryManagementService.fetchEnergyProviderMessagesByCustomer(supplierMessageDto));
+	}
+
+	@PostMapping("/fetch-all-customer-discount-request")
+	public ResponseEntity<?> fetchAllCustomerDiscountRequest(
+			@RequestBody CustomerChangeDiscountRequestDto changeDiscountRequestDto) {
+		return ResponseEntity.ok(
+				adminCustomerRequestManagementService.fetchCustomerChangeDiscountRequests(changeDiscountRequestDto));
 	}
 }

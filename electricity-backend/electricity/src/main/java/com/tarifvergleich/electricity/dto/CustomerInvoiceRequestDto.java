@@ -47,7 +47,7 @@ public class CustomerInvoiceRequestDto {
 
 	private Integer adminId;
 
-	private String invoiceCategory;
+	private Integer invoiceCategory;
 
 	private String message;
 
@@ -62,6 +62,7 @@ public class CustomerInvoiceRequestDto {
 	@AllArgsConstructor
 	@Builder
 	public static class CustomerInvoiceRequestResponseForAdminDto {
+		private Integer customerInvoiceRequestId;
 		private Integer customerId;
 		private String salutation;
 		private String customerName;
@@ -95,6 +96,7 @@ public class CustomerInvoiceRequestDto {
 		Customer customer = order.getCustomer();
 
 		if (customer != null) {
+			dto.setCustomerId(customer.getCustomerId());
 			dto.setCustomerName(customer.getFirstName() + " " + customer.getLastName());
 			dto.setCustomerEmail(customer.getEmail());
 			dto.setSalutation(customer.getSalutation());
@@ -122,10 +124,11 @@ public class CustomerInvoiceRequestDto {
 		if (order != null) {
 			dto.setDeliveryId(CustomerDeliveryResponseDto.getDeliveryResponseForProfile(order.getDelivery()));
 		}
-
+		
+		dto.setCustomerInvoiceRequestId(entity.getId());
 		dto.setOrderId(entity.getOrderId());
 		dto.setConnectionId(entity.getConnectionId());
-		dto.setInvoiceCategory(entity.getInvoiceCategory());
+		dto.setInvoiceCategory(entity.getEnergySupplierInvoiceCategory().getCategoryName());
 		dto.setMessage(entity.getMessage());
 		dto.setStatus(entity.getStatus());
 		dto.setCreatedAt(entity.getCreatedAt());

@@ -10,8 +10,6 @@ import com.tarifvergleich.electricity.model.CustomerInvoiceRequest;
 import com.tarifvergleich.electricity.model.CustomerOrder;
 import com.tarifvergleich.electricity.repository.CustomerInvoiceRequestRepository;
 import com.tarifvergleich.electricity.repository.CustomerOrderRepository;
-import com.tarifvergleich.electricity.repository.CustomerRepository;
-
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,12 +18,11 @@ import lombok.RequiredArgsConstructor;
 public class AdminCustomerInvoiceRequestService {
 
 	private final CustomerInvoiceRequestRepository customerInvoiceRequestRepository;
-	private final CustomerRepository customerRepository;
 	private final CustomerOrderRepository customerOrderRepository;
 
 	public List<CustomerInvoiceRequestResponseForAdminDto> getAllInvoiceRequests() {
 
-		return customerInvoiceRequestRepository.findAll().stream().map(entity -> convertToDto(entity)).toList();
+		return customerInvoiceRequestRepository.findAllByOrderByIdDesc().stream().map(entity -> convertToDto(entity)).toList();
 	}
 	
 	public List<CustomerInvoiceRequestResponseForAdminDto> getAllInvoiceRequests(String search) {

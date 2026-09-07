@@ -106,7 +106,7 @@ public class CustomerEnergySupplierService {
 			throw new InternalServerException("Admin id missing", HttpStatus.OK);
 
 		List<EnergySupplierMessageCategory> categories = energySupplierMessageCategoryRepo
-				.findAllByAdminAdminIdOrderByCategoryNameAsc(energySupplierMessageCategoryDto.getAdminId());
+				.findAllByAdminAdminIdOrderByIdAsc(energySupplierMessageCategoryDto.getAdminId());
 
 		List<EnergySupplierMessageCategoryCustomerResponseDto> responseCategory = categories.stream()
 				.map(EnergySupplierMessageCategoryDto::mapForGeneral).toList();

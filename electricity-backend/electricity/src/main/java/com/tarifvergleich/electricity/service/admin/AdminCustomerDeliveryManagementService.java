@@ -9,10 +9,15 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -33,6 +38,8 @@ import com.tarifvergleich.electricity.dto.EgonFileSignatureResponse.EgonDocument
 import com.tarifvergleich.electricity.dto.EgonFileSignatureResponse.EgonFileSignatureRequest;
 import com.tarifvergleich.electricity.dto.EgonOrderStatusResponse;
 import com.tarifvergleich.electricity.dto.EnergyRateDto;
+import com.tarifvergleich.electricity.dto.EnergySupplierMessageDto;
+import com.tarifvergleich.electricity.dto.EnergySupplierMessageDto.SupplierMessageCustomerResponse;
 import com.tarifvergleich.electricity.dto.ServiceRequestEmailEvent.ServiceResponseEmailEvent;
 import com.tarifvergleich.electricity.dto.email.ContractMailDto;
 import com.tarifvergleich.electricity.exception.InternalServerException;
@@ -46,11 +53,13 @@ import com.tarifvergleich.electricity.model.CustomerOrder;
 import com.tarifvergleich.electricity.model.CustomerOrderStatusRecord;
 import com.tarifvergleich.electricity.model.CustomerPayment;
 import com.tarifvergleich.electricity.model.CustomerSelectedProvider;
+import com.tarifvergleich.electricity.model.EnergySupplierMessage;
 import com.tarifvergleich.electricity.model.ManageAdminDocument;
 import com.tarifvergleich.electricity.repository.AdminSignatureRepository;
 import com.tarifvergleich.electricity.repository.CustomerBookingDocumentRepository;
 import com.tarifvergleich.electricity.repository.CustomerDeliveryRepository;
 import com.tarifvergleich.electricity.repository.CustomerOrderRepository;
+import com.tarifvergleich.electricity.repository.EnergySupplierMessageRepository;
 import com.tarifvergleich.electricity.service.ElectricityComparisonService;
 import com.tarifvergleich.electricity.service.EnergyService;
 import com.tarifvergleich.electricity.service.customer.CustomerBookingService;
@@ -67,6 +76,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminCustomerDeliveryManagementService {
 
 	private final CustomerDeliveryRepository customerDeliveryRepo;
+	private final EnergySupplierMessageRepository energySupplierMessageRepo;
 	private final Helper helper;
 	private final ElectricityComparisonService electricityComparisonService;
 	private final ObjectMapper objectMapper;
@@ -642,8 +652,36 @@ public class AdminCustomerDeliveryManagementService {
 		return Map.of("res", true, "message", "Contract Mail send successfully");
 	}
 
-	public Map<String, Object> fetchEnergyProviderMessagesByCustomer() {
-		return Map.of();
+	public Map<String, Object> fetchEnergyProviderMessagesByCustomer(EnergySupplierMessageDto supplierMessageDto) {
+
+		if (supplierMessageDto.getAdminId() == null || supplierMessageDto.getAdminId() <= 0)
+			throw new InternalServerException("Admin not found", HttpStatus.OK);
+
+		if (supplierMessageDto.getPage() != null) {
+			if (supplierMessageDto.getSize() == null || supplierMessageDto.getSize() <= 0)
+				supplierMessageDto.setSize(10);
+
+			Pageable pageable = PageRequest.of(supplierMessageDto.getPage() - 1, supplierMessageDto.getSize(),
+					Sort.by("addedOn").descending());
+
+			Page<EnergySupplierMessage> supplierMessages = energySupplierMessageRepo
+					.findAllByAdminAdminId(supplierMessageDto.getAdminId(), pageable);
+
+			Page<SupplierMessageCustomerResponse> supplierMessagesRes = supplierMessages
+				    .map(EnergySupplierMessageDto::mapForDeliveryResponseCustomer);
+			
+			return Map.of("res", true, "data", supplierMessagesRes.getContent(), "page",
+					supplierMessages.getPageable().getPageNumber() + 1, "totalPage",
+					supplierMessages.getTotalPages());
+		}
+
+		List<EnergySupplierMessage> supplierMessages = energySupplierMessageRepo
+				.findAllByAdminAdminIdOrderByAddedOnDesc(supplierMessageDto.getAdminId());
+
+		List<SupplierMessageCustomerResponse> supplierMessageRes = supplierMessages.stream()
+				.map(EnergySupplierMessageDto::mapForDeliveryResponseCustomer).toList();
+
+		return Map.of("res", true, "data", supplierMessageRes);
 	}
 
 }

@@ -12,7 +12,11 @@ import com.tarifvergleich.electricity.model.ReportMeterReadingCategory;
 public interface ReportMeterReadingCategoryRepo extends JpaRepository<ReportMeterReadingCategory, Integer> {
 
 	Optional<ReportMeterReadingCategory> findByCategoryNameLikeAndAdminAdminId(String categoryName, Integer adminId);
+	
+	Optional<ReportMeterReadingCategory> findByIdAndAdminAdminId(Integer id, Integer adminId);
 
 	List<ReportMeterReadingCategory> findAllByAdminAdminIdOrderByCategoryNameAsc(Integer adminId);
+	
+	List<ReportMeterReadingCategory> findAllByAdminAdminIdOrderByIdAsc(Integer adminId);
 
 }

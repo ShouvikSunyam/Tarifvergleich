@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -470,37 +471,35 @@ public class AdminServicePointManagementService {
 		if (energyMessageCategoryDto.getAdminId() == null || energyMessageCategoryDto.getAdminId() <= 0)
 			throw new InternalServerException("Admin id missing", HttpStatus.OK);
 
-		EnergySupplierMessageCategory supplierMessageCategory = energySupplierMessageCategoryRepo
-				.findByCategoryNameLikeAndAdminAdminId(energyMessageCategoryDto.getCategoryName().toUpperCase(),
-						energyMessageCategoryDto.getAdminId())
-				.orElse(null);
-//
-//		if (supplierMessageCategory != null)
-//			energyMessageCategoryDto.setSupplierMessageCategoryId(supplierMessageCategory.getId());
+		EnergySupplierMessageCategory supplierMessageCategory = null;
 
-		if (supplierMessageCategory != null && (energyMessageCategoryDto.getSupplierMessageCategoryId() == null
-				|| energyMessageCategoryDto.getSupplierMessageCategoryId() <= 0))
-			throw new InternalServerException("Category already exists", HttpStatus.OK);
+		if (energyMessageCategoryDto.getSupplierMessageCategoryId() != null
+				&& energyMessageCategoryDto.getSupplierMessageCategoryId() > 0) {
 
-		if (energyMessageCategoryDto.getSupplierMessageCategoryId() == null
-				|| energyMessageCategoryDto.getSupplierMessageCategoryId() <= 0) {
+			supplierMessageCategory = energySupplierMessageCategoryRepo
+					.findById(energyMessageCategoryDto.getSupplierMessageCategoryId()).orElse(null);
+		} else {
+
+			supplierMessageCategory = energySupplierMessageCategoryRepo.findByCategoryNameLikeAndAdminAdminId(
+					energyMessageCategoryDto.getCategoryName(), energyMessageCategoryDto.getAdminId()).orElse(null);
+		}
+
+		if (supplierMessageCategory == null && (energyMessageCategoryDto.getSupplierMessageCategoryId() == null
+				|| energyMessageCategoryDto.getSupplierMessageCategoryId() <= 0)) {
 
 			AdminUser admin = adminUserRepo.findById(energyMessageCategoryDto.getAdminId()).orElseThrow(
 					() -> new InternalServerException("Admin not found with this credential", HttpStatus.OK));
 
 			supplierMessageCategory = EnergySupplierMessageCategory.builder()
-					.categoryName(energyMessageCategoryDto.getCategoryName().toUpperCase()).admin(admin).build();
+					.categoryName(energyMessageCategoryDto.getCategoryName()).admin(admin).build();
 		} else {
-			if (supplierMessageCategory == null) {
-				supplierMessageCategory = energySupplierMessageCategoryRepo
-						.findByIdAndAdminAdminId(energyMessageCategoryDto.getSupplierMessageCategoryId(),
-								energyMessageCategoryDto.getAdminId())
-						.orElseThrow(() -> new InternalServerException(
-								"Energy supplier message not found with this credential", HttpStatus.OK));
+			supplierMessageCategory = energySupplierMessageCategoryRepo
+					.findByIdAndAdminAdminId(energyMessageCategoryDto.getSupplierMessageCategoryId(),
+							energyMessageCategoryDto.getAdminId())
+					.orElseThrow(() -> new InternalServerException(
+							"Energy supplier message not found with this credential", HttpStatus.OK));
 
-				supplierMessageCategory.setCategoryName(energyMessageCategoryDto.getCategoryName().toUpperCase());
-			} else
-				throw new InternalServerException("Category already exists with this name", HttpStatus.OK);
+			supplierMessageCategory.setCategoryName(energyMessageCategoryDto.getCategoryName());
 		}
 
 		supplierMessageCategory = energySupplierMessageCategoryRepo.save(supplierMessageCategory);
@@ -525,8 +524,13 @@ public class AdminServicePointManagementService {
 						energyMessageCategoryDto.getAdminId())
 				.orElseThrow(() -> new InternalServerException(
 						"Energy supplier message category not found with this credential", HttpStatus.OK));
-
-		energySupplierMessageCategoryRepo.delete(messageCategory);
+		try {
+			energySupplierMessageCategoryRepo.delete(messageCategory);
+			energySupplierMessageCategoryRepo.flush();
+		} catch (DataIntegrityViolationException e) {
+			System.err.println("Association Exists");
+			throw new InternalServerException("Supplier message exists with this category", HttpStatus.OK);
+		}
 
 		return Map.of("res", true, "message", "Energy supplier message category deleted successfully");
 	}
@@ -553,7 +557,7 @@ public class AdminServicePointManagementService {
 		}
 
 		List<EnergySupplierMessageCategory> categories = energySupplierMessageCategoryRepo
-				.findAllByAdminAdminIdOrderByCategoryNameAsc(energySupplierMessageCategoryDto.getAdminId());
+				.findAllByAdminAdminIdOrderByIdAsc(energySupplierMessageCategoryDto.getAdminId());
 
 		List<EnergySupplierMessageCategoryAdminResponseDto> responseCategory = categories.stream()
 				.map(EnergySupplierMessageCategoryDto::mapForAdmin).toList();
@@ -568,27 +572,26 @@ public class AdminServicePointManagementService {
 		if (dto.getAdminId() == null || dto.getAdminId() <= 0)
 			throw new InternalServerException("Admin id missing", HttpStatus.OK);
 
-		EnergySupplierInvoiceCategory category = energySupplierInvoiceCategoryRepo
-				.findByCategoryNameLikeAndAdminAdminId(dto.getCategoryName().toUpperCase(), dto.getAdminId())
-				.orElse(null);
+		EnergySupplierInvoiceCategory category = null;
 
-		if (category != null && (dto.getInvoiceCategoryId() == null || dto.getInvoiceCategoryId() <= 0))
-			throw new InternalServerException("Category already exists", HttpStatus.OK);
+		if (dto.getInvoiceCategoryId() != null && dto.getInvoiceCategoryId() > 0) {
+
+			category = energySupplierInvoiceCategoryRepo.findById(dto.getInvoiceCategoryId()).orElse(null);
+		} else {
+			category = energySupplierInvoiceCategoryRepo
+					.findByCategoryNameLikeAndAdminAdminId(dto.getCategoryName(), dto.getAdminId()).orElse(null);
+		}
 
 		if (dto.getInvoiceCategoryId() == null || dto.getInvoiceCategoryId() <= 0) {
 			AdminUser admin = adminUserRepo.findById(dto.getAdminId())
 					.orElseThrow(() -> new InternalServerException("Admin not found", HttpStatus.OK));
-			category = EnergySupplierInvoiceCategory.builder().categoryName(dto.getCategoryName().toUpperCase())
-					.admin(admin).build();
+			category = EnergySupplierInvoiceCategory.builder().categoryName(dto.getCategoryName()).admin(admin).build();
 		} else {
-
-			if (category != null)
-				throw new InternalServerException("Category already exists", HttpStatus.OK);
 
 			category = energySupplierInvoiceCategoryRepo
 					.findByIdAndAdminAdminId(dto.getInvoiceCategoryId(), dto.getAdminId())
 					.orElseThrow(() -> new InternalServerException("Category not found", HttpStatus.OK));
-			category.setCategoryName(dto.getCategoryName().toUpperCase());
+			category.setCategoryName(dto.getCategoryName());
 		}
 
 		energySupplierInvoiceCategoryRepo.save(category);
@@ -613,7 +616,7 @@ public class AdminServicePointManagementService {
 			throw new InternalServerException("Admin id missing", HttpStatus.OK);
 
 		List<EnergySupplierInvoiceCategory> categories = energySupplierInvoiceCategoryRepo
-				.findAllByAdminAdminIdOrderByCategoryNameAsc(dto.getAdminId());
+				.findAllByAdminAdminIdOrderByIdAsc(dto.getAdminId());
 		List<EnergySupplierInvoiceCategoryDto.InvoiceSupplierCategoryAdminResponseDto> response = categories.stream()
 				.map(EnergySupplierInvoiceCategoryDto::mapForAdminRes).toList();
 		return Map.of("res", true, "data", response);
@@ -626,29 +629,28 @@ public class AdminServicePointManagementService {
 		if (dto.getAdminId() == null || dto.getAdminId() <= 0)
 			throw new InternalServerException("Admin id missing", HttpStatus.OK);
 
-		ReportMeterReadingCategory category = reportMeterReadingCategoryRepo
-				.findByCategoryNameLikeAndAdminAdminId(dto.getCategoryName().toUpperCase(), dto.getAdminId())
-				.orElse(null);
+		ReportMeterReadingCategory category = null;
 
-		if (category != null
-				&& (dto.getReportMeterReadingCategoryId() == null || dto.getReportMeterReadingCategoryId() <= 0))
-			throw new InternalServerException("Category already exists", HttpStatus.OK);
+		if (dto.getReportMeterReadingCategoryId() != null && dto.getReportMeterReadingCategoryId() > 0) {
+			category = reportMeterReadingCategoryRepo
+					.findByIdAndAdminAdminId(dto.getReportMeterReadingCategoryId(), dto.getAdminId())
+					.orElseThrow(() -> new InternalServerException("Category is not Found with this Category Id ",
+							HttpStatus.OK));
+		} else {
 
-		if (dto.getReportMeterReadingCategoryId() == null || dto.getReportMeterReadingCategoryId() <= 0) {
+			category = reportMeterReadingCategoryRepo
+					.findByCategoryNameLikeAndAdminAdminId(dto.getCategoryName(), dto.getAdminId()).orElse(null);
+		}
+
+		if (category == null
+				&& (dto.getReportMeterReadingCategoryId() == null || dto.getReportMeterReadingCategoryId() <= 0)) {
 			category = new ReportMeterReadingCategory();
 			AdminUser admin = adminUserRepo.findById(dto.getAdminId()).orElseThrow(
 					() -> new InternalServerException("Admin User is not Found with this Admin Id ", HttpStatus.OK));
 			category.setAdmin(admin);
-		} else {
-
-			if (category != null)
-				throw new InternalServerException("Category already exists", HttpStatus.OK);
-
-			category = reportMeterReadingCategoryRepo.findById(dto.getReportMeterReadingCategoryId()).orElseThrow(
-					() -> new InternalServerException("Category is not Found with this Category Id ", HttpStatus.OK));
 		}
 
-		category.setCategoryName(dto.getCategoryName().toUpperCase());
+		category.setCategoryName(dto.getCategoryName());
 
 		reportMeterReadingCategoryRepo.save(category);
 
@@ -660,7 +662,7 @@ public class AdminServicePointManagementService {
 			throw new InternalServerException("Admin id missing", HttpStatus.OK);
 
 		List<ReportMeterReadingCategory> categories = reportMeterReadingCategoryRepo
-				.findAllByAdminAdminIdOrderByCategoryNameAsc(dto.getAdminId());
+				.findAllByAdminAdminIdOrderByIdAsc(dto.getAdminId());
 		List<ReportMeterReadingCategoryAdminResponseDto> response = categories.stream()
 				.map(ReportMeterReadingCategoryDto::mapForAdmin).toList();
 		return Map.of("res", true, "data", response);

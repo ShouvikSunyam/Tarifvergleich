@@ -15,11 +15,13 @@ import com.tarifvergleich.electricity.dto.ReportMeterReadingDto;
 import com.tarifvergleich.electricity.exception.InternalServerException;
 import com.tarifvergleich.electricity.model.Customer;
 import com.tarifvergleich.electricity.model.CustomerInvoiceRequest;
+import com.tarifvergleich.electricity.model.EnergySupplierInvoiceCategory;
 import com.tarifvergleich.electricity.model.ReportMeterReading;
 import com.tarifvergleich.electricity.model.ReportMeterReadingCategory;
 import com.tarifvergleich.electricity.repository.CustomerConnectionRepository;
 import com.tarifvergleich.electricity.repository.CustomerInvoiceRequestRepository;
 import com.tarifvergleich.electricity.repository.CustomerRepository;
+import com.tarifvergleich.electricity.repository.EnergySupplierInvoiceCategoryRepository;
 import com.tarifvergleich.electricity.repository.ReportMeterReadingRepository;
 import com.tarifvergleich.electricity.util.FileServiceCustomer;
 
@@ -34,6 +36,7 @@ public class CustomerMeterService {
 	private final ReportMeterReadingRepository reportMeterReadingRepo;
 	private final FileServiceCustomer fileServiceCustomer;
 	private final CustomerRepository customerRepo;
+	private final EnergySupplierInvoiceCategoryRepository energySupplierInvoiceCategoryRepo;
 	private final com.tarifvergleich.electricity.repository.ReportMeterReadingCategoryRepo reportMeterReadingCategoryRepo;
 
 	public Map<String, Object> updateMeterDesignation(Long connectionId, String meterDesignation) {
@@ -45,8 +48,15 @@ public class CustomerMeterService {
 
 	public Map<String, Object> submitInvoiceRequest(CustomerInvoiceRequestDto dto) {
 
+		if (dto.getInvoiceCategory() == null || dto.getInvoiceCategory() <= 0)
+			throw new InternalServerException("Category not found", HttpStatus.OK);
+
+		EnergySupplierInvoiceCategory invoiceCategory = energySupplierInvoiceCategoryRepo
+				.findById(dto.getInvoiceCategory())
+				.orElseThrow(() -> new InternalServerException("Category not found", HttpStatus.OK));
+
 		CustomerInvoiceRequest request = CustomerInvoiceRequest.builder().customerId(dto.getCustomerId())
-				.connectionId(dto.getConnectionId()).invoiceCategory(dto.getInvoiceCategory()).orderId(dto.getOrderId())
+				.connectionId(dto.getConnectionId()).energySupplierInvoiceCategory(invoiceCategory).orderId(dto.getOrderId())
 				.deliveryId(dto.getDeliveryId()).message(dto.getMessage()).status(1).createdAt(LocalDateTime.now())
 				.build();
 
@@ -129,7 +139,7 @@ public class CustomerMeterService {
 			throw new InternalServerException("Admin id missing", HttpStatus.OK);
 
 		List<ReportMeterReadingCategory> categories = reportMeterReadingCategoryRepo
-				.findAllByAdminAdminIdOrderByCategoryNameAsc(categoryDto.getAdminId());
+				.findAllByAdminAdminIdOrderByIdAsc(categoryDto.getAdminId());
 
 		List<ReportMeterReadingCategoryDto.ReportMeterReadingCategoryAdminResponseDto> response = categories.stream()
 				.map(ReportMeterReadingCategoryDto::mapForAdmin).toList();

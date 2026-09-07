@@ -16,4 +16,6 @@ public interface EnergySupplierMessageCategoryRepository extends JpaRepository<E
 	Optional<EnergySupplierMessageCategory> findByCategoryNameLikeAndAdminAdminId(String categoryName, Integer adminId);
 
 	List<EnergySupplierMessageCategory> findAllByAdminAdminIdOrderByCategoryNameAsc(Integer adminId);
+	
+	List<EnergySupplierMessageCategory> findAllByAdminAdminIdOrderByIdAsc(Integer adminId);
 }

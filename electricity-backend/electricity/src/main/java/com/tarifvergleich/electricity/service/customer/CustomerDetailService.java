@@ -296,7 +296,7 @@ public class CustomerDetailService {
 			List<CustomerInvoiceRequestDto> invoiceDtoList = invoiceMap.getOrDefault(entity.getId(), List.of()).stream()
 					.map(inv -> CustomerInvoiceRequestDto.builder().id(inv.getId()).customerId(inv.getCustomerId())
 							.connectionId(inv.getConnectionId()).orderId(inv.getOrderId())
-							.deliveryId(inv.getDeliveryId()).invoiceCategory(inv.getInvoiceCategory())
+							.deliveryId(inv.getDeliveryId()).invoiceCategory(inv.getEnergySupplierInvoiceCategory().getId())
 							.message(inv.getMessage()).status(inv.getStatus()).createdAt(inv.getCreatedAt()).build())
 					.toList();
 
