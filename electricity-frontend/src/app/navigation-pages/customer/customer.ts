@@ -82,7 +82,7 @@ export class Customer {
   ];
 
   /* ── Tab control ──────────────────────────────────────────────── */
-  activeTab: number = 1;
+  activeTab: number = 0;
   serviceTab: number = 1;
   documentTab: number = 0;
 
@@ -152,6 +152,7 @@ export class Customer {
     this.selectedIndex = -1;
     this.profileSubTab = '';
     this.resetForm();
+    this.resetContractChangeForm(); 
 
     if (this.activeTab == 2 || this.activeTab == 1) {
       this.fetchCards();
@@ -275,7 +276,7 @@ export class Customer {
   qrScanned: boolean = false;
   ngOnInit(): void {
     const user = localStorage.getItem('auth_user');
-
+    document.addEventListener('click', this.contractDocClickHandler, true);
     if (!user) {
       this.router.navigate(['/home']);
       return;
@@ -1790,15 +1791,29 @@ export class Customer {
   submittedSelections: number[] = [];
 
   contractChangeData: any = {
-    lastName: '',
-    companyName: '',
-    title: '',
-    firstName: '',
-    salutation: '',
-    dateOfBirth: '',
-  };
+  lastName: '',
+  companyName: '',
+  title: '',
+  firstName: '',
+  salutation: '',
+  dateOfBirth: '',
+  billingPLZ: '',
+  billingOrt: '',
+  billingStreet: '',
+  billingHouseNumber: '',
+  deliveryHouseNumber: '',
+  email: '',
+  iban: '',
+  accountHolder: '',
+  otherRequest: '',
+};
 
   uploadedContractDocuments: any = {};
+
+// error bags — keyed by field name
+
+// addressFieldErrors: { [key: string]: string } = {};
+
 
   onContractDocumentUpload(event: any, type: string): void {
     const file = event.target.files?.[0];
@@ -1806,7 +1821,11 @@ export class Customer {
     if (!file) return;
 
     this.uploadedContractDocuments[type] = file;
+
+      delete this.fieldErrors[`${type}Document`];
   }
+
+
   getContractOptionLabel(id: number): string {
     return this.contractOptionsList.find((x: any) => x.id === id)?.label || '';
   }
@@ -1825,11 +1844,187 @@ export class Customer {
       this.selectedContractOptions.push(optionId);
     }
   }
+private validateContractChanges(): boolean {
+  this.fieldErrors = {};
+  this.addressFieldErrors = {};
+  let isValid = true;
 
+  const requireField = (value: any, errorKey: string, message: string) => {
+    if (!value || (typeof value === 'string' && !value.trim())) {
+      this.fieldErrors[errorKey] = message;
+      isValid = false;
+    }
+  };
+
+  const requireDocument = (docKey: string, errorKey: string, message: string) => {
+    if (!this.uploadedContractDocuments[docKey]) {
+      this.fieldErrors[errorKey] = message;
+      isValid = false;
+    }
+  };
+
+  // 1 — Last name
+  if (this.submittedSelections.includes(1)) {
+    requireField(this.contractChangeData.lastName, 'lastName', 'Bitte geben Sie Ihren neuen Nachnamen ein.');
+    requireDocument('lastName', 'lastNameDocument', 'Bitte laden Sie einen Nachweis hoch.');
+  }
+
+  // 2 — Company name
+  if (this.submittedSelections.includes(2)) {
+    requireField(this.contractChangeData.companyName, 'companyName', 'Bitte geben Sie den Firmennamen ein.');
+    requireDocument('companyName', 'companyNameDocument', 'Bitte laden Sie einen Nachweis hoch.');
+  }
+
+  // 3 — Title
+  if (this.submittedSelections.includes(3)) {
+    requireDocument('title', 'titleDocument', 'Bitte laden Sie einen Titelnachweis hoch.');
+  }
+
+  // 4 — First name
+  if (this.submittedSelections.includes(4)) {
+    requireField(this.contractChangeData.firstName, 'firstName', 'Bitte geben Sie Ihren neuen Vornamen ein.');
+  }
+
+  // 5 — Salutation
+  if (this.submittedSelections.includes(5)) {
+    requireField(this.contractChangeData.salutation, 'salutation', 'Bitte wählen Sie eine Anrede.');
+  }
+
+  // Shared proof for first name / salutation
+  if (this.submittedSelections.includes(4) || this.submittedSelections.includes(5)) {
+    requireDocument('personData', 'personDataDocument', 'Bitte laden Sie eine Kopie des Personalausweises hoch.');
+  }
+
+  // 6 — Date of birth
+  if (this.submittedSelections.includes(6)) {
+    requireField(this.contractChangeData.dateOfBirth, 'dateOfBirth', 'Bitte geben Sie Ihr Geburtsdatum ein.');
+    requireDocument('dateOfBirth', 'dateOfBirthDocument', 'Bitte laden Sie eine Kopie des Personalausweises hoch.');
+  }
+
+  // 7 — Billing address
+  if (this.submittedSelections.includes(7)) {
+    requireField(this.contractChangeData.billingPLZ, 'billingPLZ', 'Bitte geben Sie Ihre PLZ ein.');
+    requireField(this.contractChangeData.billingOrt, 'billingOrt', 'Bitte geben Sie den Ort ein.');
+    requireField(this.contractChangeData.billingStreet, 'billingStreet', 'Bitte geben Sie Ihre Straße ein.');
+    requireField(this.contractChangeData.billingHouseNumber, 'billingHouseNumber', 'Bitte geben Sie Ihre Hausnummer ein.');
+  }
+
+  // 8 — Delivery/customer address
+  if (this.submittedSelections.includes(8)) {
+    if (!this.customerData?.address?.zip) {
+      this.addressFieldErrors['zip'] = 'Bitte geben Sie Ihre PLZ ein.';
+      isValid = false;
+    }
+    if (!this.customerData?.address?.city) {
+      this.addressFieldErrors['city'] = 'Bitte geben Sie den Ort ein.';
+      isValid = false;
+    }
+    if (!this.customerData?.address?.street) {
+      this.addressFieldErrors['street'] = 'Bitte geben Sie Ihre Straße ein.';
+      isValid = false;
+    }
+    if (!this.contractChangeData.deliveryHouseNumber?.trim()) {
+      this.addressFieldErrors['houseNumber'] = 'Bitte geben Sie Ihre Hausnummer ein.';
+      isValid = false;
+    }
+  }
+
+  // 9 — Email
+  if (this.submittedSelections.includes(9)) {
+    const email = this.contractChangeData.email?.trim();
+    if (!email) {
+      this.fieldErrors['email'] = 'Bitte geben Sie Ihre neue E-Mail-Adresse ein.';
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      this.fieldErrors['email'] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+      isValid = false;
+    }
+  }
+
+  // 10 — Bank
+  if (this.submittedSelections.includes(10)) {
+    requireField(this.contractChangeData.iban, 'iban', 'Bitte geben Sie Ihre IBAN ein.');
+    requireField(this.contractChangeData.accountHolder, 'accountHolder', 'Bitte geben Sie den Kontoinhaber ein.');
+  }
+
+  // 11 — Other
+  if (this.submittedSelections.includes(11)) {
+    requireField(this.contractChangeData.otherRequest, 'otherRequest', 'Bitte beschreiben Sie Ihre Anfrage.');
+  }
+
+  return isValid;
+}
   submitContractSelection(): void {
     this.submittedSelections = [...this.selectedContractOptions];
 
     this.contractDropdownOpen = false;
+  }
+
+  @ViewChild('contractDropdownContainer') contractDropdownContainer!: ElementRef;
+
+  private contractDocClickHandler = (event: Event) => {
+    if (
+      this.contractDropdownOpen &&
+      this.contractDropdownContainer &&
+      !this.contractDropdownContainer.nativeElement.contains(event.target)
+    ) {
+      this.contractDropdownOpen = false;
+      this.cdr.markForCheck(); // safe to keep even without OnPush
+    }
+  };
+
+ submitContractChanges(): void {
+  if (!this.validateContractChanges()) {
+    // scroll to the first error box so the user sees it
+    setTimeout(() => {
+      const firstErrorEl = document.querySelector('.field-error, .error-hint');
+      firstErrorEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 0);
+    return;
+  }
+
+  const payload = {
+    selectedFields: this.submittedSelections,
+    data: this.contractChangeData,
+    documents: this.uploadedContractDocuments,
+  };
+
+  console.log('Submitting contract changes:', payload);
+
+  this.http.post<any>(`${API_BASE}/customer/update-contract-details`, payload).subscribe({
+    next: (res) => {
+      if (res?.res) {
+        console.log('Contract details updated successfully');
+        this.resetContractChangeForm();
+      } else {
+        console.error('Update failed', res);
+      }
+    },
+    error: (err) => {
+      console.error('Error submitting contract changes', err);
+    },
+  });
+}
+
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.contractDocClickHandler, true);
+  }
+
+  resetContractChangeForm(): void {
+    this.contractDropdownOpen = false;
+    this.selectedContractOptions = [];
+    this.submittedSelections = [];
+
+    this.contractChangeData = {
+      lastName: '',
+      companyName: '',
+      title: '',
+      firstName: '',
+      salutation: '',
+      dateOfBirth: '',
+    };
+
+    this.uploadedContractDocuments = {};
   }
 
   /* Change Discount Payment */

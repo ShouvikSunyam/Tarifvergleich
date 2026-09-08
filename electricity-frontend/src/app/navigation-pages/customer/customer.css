@@ -3866,14 +3866,14 @@ input {
 .contract-change-upload-box {
   margin-top: 20px;
   /* padding: 18px; */
-  border: 1px dashed #d7d7d7;
+  /* border: 1px dashed #d7d7d7; */
   border-radius: 14px;
   background: #fafafa;
   transition: 0.2s ease;
 }
 
 .contract-change-upload-box:hover {
-  border-color: #ff7a00;
+  /* border-color: #ff7a00; */
   background: #fffaf5;
 }
 
