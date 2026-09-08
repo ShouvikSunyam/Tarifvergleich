@@ -12,5 +12,6 @@
         </endorsedDirs>
     </libraryInfo>
     <libraryInfo home="C:\Program Files\Java\jdk-22" version="22.0.1"/>
+    <libraryInfo home="C:\Users\PC\AppData\Local\Programs\Eclipse Adoptium\jdk-17.0.19.10-hotspot" version="17.0.19"/>
     <libraryInfo home="C:\Users\PC\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.10.v20260205-0638\jre" version="21.0.10"/>
 </libraryInfos>
