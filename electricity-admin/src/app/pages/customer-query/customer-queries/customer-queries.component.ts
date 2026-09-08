@@ -27,6 +27,31 @@ export interface ServiceRequest {
   lastName: string | null;
   email: string | null;
   messages?: ChatMessage[];
+  timeslot?: Timeslot | null;
+  deliveryId?: number | null;
+}
+
+export interface TimeslotCustomer {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  userType: string;
+  title: string;
+  salutation: string;
+}
+
+export interface Timeslot {
+  cousellingId: number;
+  mobileNumber: string;
+  weekDay: string;
+  timeSlot: string;
+  description: string;
+  scheduleDate: number;
+  createdOn: number;
+  customer: TimeslotCustomer;
+  concluded: boolean;
+  deliveryId: number | null;
 }
 
 export interface ServiceRequestResponse {
@@ -92,7 +117,16 @@ export class CustomerQueriesComponent implements OnInit {
       },
     ];
   }
-
+  // ── Booking details ──────────────────────────────────────────────────────
+  openBookingDetails(
+    deliveryId: number | null | undefined,
+    event?: Event,
+  ): void {
+    event?.stopPropagation();
+    if (!deliveryId) return;
+    window.location.href = `/bookings/${deliveryId}`;
+  }
+  
   get filteredRequests(): ServiceRequest[] {
     switch (this.selectedTab) {
       case "open":
@@ -107,7 +141,7 @@ export class CustomerQueriesComponent implements OnInit {
   }
 
   // ── Chat panel ────────────────────────────────────────────────────────────
-  @ViewChild('chatContainer') chatContainer!: ElementRef;
+  @ViewChild("chatContainer") chatContainer!: ElementRef;
   chatOpen = false;
   activeChatRequest: ServiceRequest | null = null;
   chatMessages: ChatMessage[] = [];

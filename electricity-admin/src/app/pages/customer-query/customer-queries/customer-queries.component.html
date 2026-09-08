@@ -2,7 +2,7 @@
 
     <!-- Header & Filters -->
     <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4">
-        <h2 class="text-xl font-semibold text-gray-800 dark:text-white shrink-0">Kundenanfragen</h2>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white shrink-0">Serviceanfragen</h2>
 
         <div class="flex flex-wrap items-center gap-3 w-full lg:justify-end">
 
@@ -97,7 +97,7 @@
                     <th class="px-4 py-3">Service</th>
                     <th class="px-4 py-3">Erstellt am</th>
                     <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3 text-right rounded-tr-lg">Aktionen</th>
+                    <th class="px-4 py-3 text-right rounded-tr-lg">Aktion</th>
                 </tr>
             </thead>
             <tbody class="divide-y dark:divide-gray-700">
@@ -127,15 +127,28 @@
                     </td>
 
                     <td class="px-4 py-4">
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
-                    'bg-yellow-100 text-yellow-700': request.isOpen && !request.inProgress,
-                    'bg-blue-100 text-blue-700': request.inProgress,
-                    'bg-green-100 text-green-700': request.isClosed
-                  }">
-                            @if (request.isClosed) { Geschlossen }
-                            @else if (request.inProgress) { In Bearbeitung }
-                            @else { Offen }
-                        </span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
+              'bg-yellow-100 text-yellow-700': request.isOpen && !request.inProgress,
+              'bg-blue-100 text-blue-700': request.inProgress,
+              'bg-green-100 text-green-700': request.isClosed
+            }">
+                                @if (request.isClosed) { Geschlossen }
+                                @else if (request.inProgress) { In Bearbeitung }
+                                @else { Offen }
+                            </span>
+
+                            @if (request.timeslot) {
+                            <span title="Rückruf vereinbart"
+                                class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </span>
+                            }
+                        </div>
                     </td>
 
                     <td class="px-4 py-4 text-right" (click)="$event.stopPropagation()">
@@ -151,6 +164,17 @@
                                 </svg>
                             </button>
 
+                            <!-- @if (request.deliveryId) {
+                            <button (click)="openBookingDetails(request.deliveryId, $event)"
+                                title="Buchungsdetails öffnen"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 transition active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </button>
+                            } -->
                             <!-- Close Query Button -->
                             <!-- @if (!request.isClosed) {
                             <button (click)="requestCloseQuery(request)"
@@ -211,7 +235,7 @@
                 @if (expandedRow === request.serviceRequestId) {
                 <tr class="bg-blue-50/30 dark:bg-gray-800/40">
                     <td colspan="7" class="px-8 py-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                        <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
 
                             <div class="space-y-1">
                                 <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Ticket-Details</p>
@@ -248,7 +272,80 @@
                                 <p><strong>E-Mail:</strong> {{ request.email }}</p>
                             </div>
 
+                        </div> -->
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-sm">
+
+                            <div class="space-y-1">
+                                <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Ticket-Details</p>
+                                <p><strong>Ticket-Nr.:</strong> <span class="font-mono text-xs">{{ request.ticketNumber
+                                        }}</span></p>
+                                <p><strong>Service:</strong> {{ request.serviceName || '—' }}</p>
+                                <p><strong>Erstellt:</strong> {{ (request.createdOn * 1000) | date:'dd.MM.yyyy HH:mm' }}
+                                </p>
+                            </div>
+
+                            <div class="space-y-1">
+                                <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Verlauf</p>
+                                <p>
+                                    <strong>Geschlossen am:</strong>
+                                    @if (request.requestClosedOn) {
+                                    <span>{{ (request.requestClosedOn * 1000) | date:'dd.MM.yyyy HH:mm' }}</span>
+                                    } @else {
+                                    <span class="text-gray-400 italic">—</span>
+                                    }
+                                </p>
+                                <p>
+                                    <strong>Wiedereröffnet:</strong>
+                                    @if (request.requestReopenedOn) {
+                                    <span>{{ (request.requestReopenedOn * 1000) | date:'dd.MM.yyyy HH:mm' }}</span>
+                                    } @else {
+                                    <span class="text-gray-400 italic">—</span>
+                                    }
+                                </p>
+                            </div>
+
+                            <div class="space-y-1">
+                                <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Kundendaten</p>
+                                <p><strong>Name:</strong> {{ request.fistName }} {{ request.lastName }}</p>
+                                <p><strong>E-Mail:</strong> {{ request.email }}</p>
+                            </div>
+
+                            <!-- NEW: Callback details, only if present -->
+                            @if (request.timeslot) {
+                            <div class="space-y-1">
+                                <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Rückruf-Details</p>
+                                <p><strong>Datum:</strong> {{ request.timeslot.weekDay }}</p>
+                                <p><strong>Zeitfenster:</strong> {{ request.timeslot.timeSlot }} Uhr</p>
+                                <p><strong>Telefon:</strong> {{ request.timeslot.mobileNumber }}</p>
+                                @if (request.timeslot.description) {
+                                <p><strong>Notiz:</strong> {{ request.timeslot.description }}</p>
+                                }
+                                <!-- <p>
+                                    <strong>Erledigt:</strong>
+                                    <span
+                                        [ngClass]="request.timeslot.concluded ? 'text-green-600' : 'text-gray-400 italic'">
+                                        {{ request.timeslot.concluded ? 'Ja' : 'Nein' }}
+                                    </span>
+                                </p> -->
+                            </div>
+                            }
                         </div>
+
+                        <!-- NEW: Booking details button, only if deliveryId present -->
+                        @if (request.deliveryId) {
+                        <div class="mt-4 pt-4 border-t dark:border-gray-700">
+                            <button (click)="openBookingDetails(request.deliveryId, $event)"
+                                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 text-sm font-medium transition active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                Buchungsdetails ansehen
+                            </button>
+                        </div>
+                        }
                     </td>
                 </tr>
                 }
@@ -456,17 +553,17 @@
         }
 
         <!-- Reply Box -->
-    
-            @if (!activeChatRequest.isClosed) {
-            <div class="px-4 py-3 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 shrink-0">
-                <div class="relative flex w-full">
-                    <!-- Textarea: increased to 1 rows, added pr-12 so text doesn't hide behind the button -->
+
+        @if (!activeChatRequest.isClosed) {
+        <div class="px-4 py-3 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 shrink-0">
+            <div class="relative flex w-full">
+                <!-- Textarea: increased to 1 rows, added pr-12 so text doesn't hide behind the button -->
                 <textarea [(ngModel)]="replyMessage" (keydown.enter)="onReplyEnter($event)"
                     [disabled]="showSendConfirm || isSendingReply"
                     placeholder="Antwort eingeben… (Enter zum Senden, Shift+Enter für neue Zeile)" rows="1"
                     class="w-full resize-none text-sm pl-4 pr-12 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition placeholder-gray-400 disabled:opacity-50">
                 </textarea>
-                
+
                 <!-- Send Button: positioned absolute inside the textarea -->
                 <button (click)="requestSendReply()"
                     [disabled]="!replyMessage.trim() || isSendingReply || showSendConfirm"
@@ -475,8 +572,10 @@
                     <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                     } @else {
                     <!-- New standard right-pointing paper airplane -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-0.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-4 h-4 ml-0.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                     </svg>
                     }
                 </button>

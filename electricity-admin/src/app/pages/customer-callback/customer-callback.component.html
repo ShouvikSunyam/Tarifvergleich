@@ -2,9 +2,7 @@
   <!-- STATS CARDS -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
     <!-- TOTAL REQUESTS -->
-    <div
-      class="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 border border-gray-100 dark:border-gray-800"
-    >
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 border border-gray-100 dark:border-gray-800">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm text-gray-500 dark:text-gray-400">Gesamtanfragen</p>
@@ -35,9 +33,7 @@
     </div>
 
     <!-- COMPLETED -->
-    <div
-      class="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 border border-gray-100 dark:border-gray-800"
-    >
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 border border-gray-100 dark:border-gray-800">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -70,9 +66,7 @@
     </div>
 
     <!-- PENDING -->
-    <div
-      class="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 border border-gray-100 dark:border-gray-800"
-    >
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 border border-gray-100 dark:border-gray-800">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -116,20 +110,15 @@
 </div>
 <div class="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow relative">
   <!-- Header & Filters -->
-  <div
-    class="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4"
-  >
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4">
     <h2 class="text-xl font-semibold text-gray-800 dark:text-white shrink-0">
       Rückrufliste für Kunden
     </h2>
 
     <div class="flex flex-wrap items-center gap-3 w-full lg:justify-end">
       <!-- STATUS FILTER -->
-      <select
-        [(ngModel)]="selectedStatus"
-        (change)="onFilterChange()"
-        class="text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white py-2 px-3 outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer"
-      >
+      <select [(ngModel)]="selectedStatus" (change)="onFilterChange()"
+        class="text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white py-2 px-3 outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer">
         <option value="">Alle Status</option>
         <option value="false">Ausstehend</option>
         <option value="true">Erledigt</option>
@@ -142,194 +131,182 @@
     <!-- Table Section -->
     <div class="flex-1 min-w-0 transition-all duration-300">
       @if (isLoading) {
-        <div class="flex items-center gap-2 text-gray-500 text-sm py-4">
-          <div
-            class="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-500"
-          ></div>
-          <span>Rückrufliste für Kunden wird geladen...</span>
-        </div>
+      <div class="flex items-center gap-2 text-gray-500 text-sm py-4">
+        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-500"></div>
+        <span>Rückrufliste für Kunden wird geladen...</span>
+      </div>
       }
 
       @if (!isLoading && !errorMessage && customers.length > 0) {
-        <div
-          class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700"
-        >
-          <table
-            class="w-full text-sm text-left border-separate border-spacing-0"
-          >
-            <thead
-              class="text-xs uppercase bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
-            >
-              <tr>
-                <th class="px-4 py-3 font-medium">Name</th>
-                <th class="px-4 py-3 font-medium">E-Mail</th>
-                <th class="px-4 py-3 font-medium">Telefon</th>
-                <th class="px-4 py-3 font-medium">Termin</th>
-                <th class="px-4 py-3 font-medium">Beschreibung</th>
-                <th class="px-4 py-3 font-medium">Rückrufstatus</th>
-                <th class="px-4 py-3 font-medium">Aktion</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (item of customers; track item.cousellingId) {
-                <tr class="border-t border-gray-100 dark:border-gray-700/60">
-                  <!-- NAME -->
-                  <td class="px-4 py-3.5">
-                    <div class="font-medium text-gray-900 dark:text-white">
-                      @if (item.customer) {
-                        {{ item.customer.salutation || "" }}
-                        {{ item.customer.title || "" }}
-                        {{ item.customer.firstName || "" }}
-                        {{ item.customer.lastName || "" }}
-                      } @else {
-                        -
-                      }
-                    </div>
+      <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+        <table class="w-full text-sm text-left border-separate border-spacing-0">
+          <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+            <tr>
+              <th class="px-4 py-3 font-medium">Name</th>
+              <th class="px-4 py-3 font-medium">E-Mail</th>
+              <th class="px-4 py-3 font-medium">Telefon</th>
+              <th class="px-4 py-3 font-medium">Termin</th>
+              <th class="px-4 py-3 font-medium">Beschreibung</th>
+              <th class="px-4 py-3 font-medium">Rückrufstatus</th>
+              <th class="px-4 py-3 font-medium">Aktion</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of customers; track item.cousellingId) {
+            <tr class="border-t border-gray-100 dark:border-gray-700/60">
+              <!-- NAME -->
+              <td class="px-4 py-3.5">
+                <div class="font-medium text-gray-900 dark:text-white">
+                  @if (item.customer) {
+                  {{ item.customer.salutation || "" }}
+                  {{ item.customer.title || "" }}
+                  {{ item.customer.firstName || "" }}
+                  {{ item.customer.lastName || "" }}
+                  } @else {
+                  -
+                  }
+                </div>
 
-                    <div class="text-xs text-gray-400 mt-0.5">
-                      @if (item.customer) {
-                        {{
-                          item.customer.userType === "BUSINESS"
-                            ? "Geschäftlich"
-                            : "Privat"
-                        }}
-                      }
-                    </div>
-                  </td>
+                <div class="text-xs text-gray-400 mt-0.5">
+                  @if (item.customer) {
+                  {{
+                  item.customer.userType === "BUSINESS"
+                  ? "Geschäftlich"
+                  : "Privat"
+                  }}
+                  }
+                </div>
+              </td>
 
-                  <!-- EMAIL -->
-                  <td
-                    class="px-4 py-3.5 text-gray-600 dark:text-gray-400 text-xs"
-                  >
-                    @if (item.customer) {
-                      {{ item.customer.email || "—" }}
-                    } @else {
-                      -
-                    }
-                  </td>
+              <!-- EMAIL -->
+              <td class="px-4 py-3.5 text-gray-600 dark:text-gray-400 text-xs">
+                @if (item.customer) {
+                {{ item.customer.email || "—" }}
+                } @else {
+                -
+                }
+              </td>
 
-                  <!-- MOBILE -->
-                  <td class="px-4 py-3.5">
-                    <div class="text-sm text-gray-800 dark:text-gray-200">
-                      {{ item.mobileNumber || "—" }}
-                    </div>
-                  </td>
+              <!-- MOBILE -->
+              <td class="px-4 py-3.5">
+                <div class="text-sm text-gray-800 dark:text-gray-200">
+                  {{ item.mobileNumber || "—" }}
+                </div>
+              </td>
 
-                  <!-- CALLBACK DATE & TIME -->
-                  <td class="px-4 py-3.5">
-                    <div
-                      class="font-medium text-gray-800 dark:text-gray-200 text-sm"
-                    >
+              <!-- CALLBACK DATE & TIME -->
+              <td class="px-4 py-3.5 align-top">
+                <div class="flex flex-col gap-1">
+                  <div>
+                    <div class="font-medium text-gray-800 dark:text-gray-200 text-sm whitespace-nowrap">
                       {{ item.scheduleDate * 1000 | date: "dd.MM.yyyy" }}
                     </div>
-
-                    <div class="text-xs text-gray-500 mt-1">
+                    <div class="text-xs text-gray-500 mt-1 whitespace-nowrap">
                       {{ item.weekDay }} · {{ item.timeSlot }} Uhr
                     </div>
-                  </td>
+                  </div>
 
-                  <!-- DESCRIPTION -->
-                  <td class="px-4 py-3.5 max-w-[220px]">
+                  @if (item.deliveryId) {
+                  <span title="Buchung vorhanden"
+                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 w-fit whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Gebucht
+                  </span>
+                  }
+                </div>
+              </td>
+              <!-- DESCRIPTION -->
+              <td class="px-4 py-3.5 max-w-[220px]">
+                <div class="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
+                  {{ item.description || "—" }}
+                </div>
+              </td>
+
+              <!-- STATUS -->
+              <td class="px-4 py-3.5">
+                <span class="px-2.5 py-1 rounded-full text-xs font-medium" [class.bg-green-100]="item.concluded"
+                  [class.text-green-700]="item.concluded" [class.bg-yellow-100]="!item.concluded"
+                  [class.text-yellow-700]="!item.concluded">
+                  {{ item.concluded ? "Erledigt" : "Ausstehend" }}
+                </span>
+              </td>
+
+              <!-- ACTION -->
+              <td class="px-4 py-3.5">
+                <div class="flex items-center justify-end gap-3">
+
+                  @if (item.deliveryId) {
+                  <button (click)="openBookingDetails(item.deliveryId, $event)" title="Buchungsdetails öffnen"
+                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 transition active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                  }
+
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" [checked]="item.concluded"
+                      (change)="toggleCallbackStatus(item)" />
                     <div
-                      class="text-xs text-gray-600 dark:text-gray-300 line-clamp-2"
-                    >
-                      {{ item.description || "—" }}
+                      class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:bg-green-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full">
                     </div>
-                  </td>
-
-                  <!-- STATUS -->
-                  <td class="px-4 py-3.5">
-                    <span
-                      class="px-2.5 py-1 rounded-full text-xs font-medium"
-                      [class.bg-green-100]="item.concluded"
-                      [class.text-green-700]="item.concluded"
-                      [class.bg-yellow-100]="!item.concluded"
-                      [class.text-yellow-700]="!item.concluded"
-                    >
-                      {{ item.concluded ? "Erledigt" : "ausstehend" }}
-                    </span>
-                  </td>
-
-                  <!-- ACTION -->
-                  <td class="px-4 py-3.5 text-right">
-                    <label
-                      class="relative inline-flex items-center cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        class="sr-only peer"
-                        [checked]="item.concluded"
-                        (change)="toggleCallbackStatus(item)"
-                      />
-
-                      <div
-                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:bg-green-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"
-                      ></div>
-
-                      <!-- <span
-                          class="ml-3 text-xs font-medium text-gray-700 dark:text-gray-300"
-                        >
-                          {{ item.concluded ? "Erledigt" : "ausstehend" }}
-                        </span> -->
-                    </label>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+                  </label>
+                </div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
       }
 
       @if (!isLoading && errorMessage) {
-        <div class="text-center py-12">
-          <p class="text-red-500 font-medium">{{ errorMessage }}</p>
-          <button
-            (click)="fetchCustomers(1)"
-            class="mt-2 text-sm text-brand-500 underline"
-          >
-            Erneut versuchen
-          </button>
-        </div>
+      <div class="text-center py-12">
+        <p class="text-red-500 font-medium">{{ errorMessage }}</p>
+        <button (click)="fetchCustomers(1)" class="mt-2 text-sm text-brand-500 underline">
+          Erneut versuchen
+        </button>
+      </div>
       }
 
       @if (!isLoading && !errorMessage && customers.length === 0) {
-        <div class="text-center py-12">
-          <p class="text-gray-500 font-medium">Keine Rückrufanfrage gefunden</p>
-          <p class="text-xs text-gray-400 mt-1">
-            Versuchen Sie andere Filtereinstellungen.
-          </p>
-        </div>
+      <div class="text-center py-12">
+        <p class="text-gray-500 font-medium">Keine Rückrufanfrage gefunden</p>
+        <p class="text-xs text-gray-400 mt-1">
+          Versuchen Sie andere Filtereinstellungen.
+        </p>
+      </div>
       }
 
       <!-- Pagination -->
       @if (!isLoading && !errorMessage && customers.length > 0) {
-        <div class="flex items-center justify-between px-2 py-4 mt-2">
-          <div class="text-sm text-gray-500">
-            Seite
-            <span class="font-medium text-gray-900 dark:text-white">{{
-              currentPage
+      <div class="flex items-center justify-between px-2 py-4 mt-2">
+        <div class="text-sm text-gray-500">
+          Seite
+          <span class="font-medium text-gray-900 dark:text-white">{{
+            currentPage
             }}</span>
-            @if (totalPage) {
-              <span> von {{ totalPage }}</span>
-            }
-          </div>
-          <div class="flex gap-2">
-            <button
-              (click)="prevPage()"
-              [disabled]="currentPage === 1 || isLoading"
-              class="px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              ← Zurück
-            </button>
-            <button
-              (click)="nextPage()"
-              [disabled]="!hasMoreData || isLoading"
-              class="px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              Weiter →
-            </button>
-          </div>
+          @if (totalPage) {
+          <span> von {{ totalPage }}</span>
+          }
         </div>
+        <div class="flex gap-2">
+          <button (click)="prevPage()" [disabled]="currentPage === 1 || isLoading"
+            class="px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
+            ← Zurück
+          </button>
+          <button (click)="nextPage()" [disabled]="!hasMoreData || isLoading"
+            class="px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
+            Weiter →
+          </button>
+        </div>
+      </div>
       }
     </div>
   </div>

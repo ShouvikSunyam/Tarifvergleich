@@ -25,6 +25,8 @@ export type CallbackCustomer = {
     title: string | null;
     salutation: string | null;
   };
+
+  deliveryId?: number | null;
 };
 
 @Component({
@@ -108,6 +110,17 @@ export class CustomerCallbackComponent {
       this.fetchCustomers(this.currentPage - 1);
     }
   }
+
+  // ── Booking details ──────────────────────────────────────────────────────
+  openBookingDetails(
+    deliveryId: number | null | undefined,
+    event?: Event,
+  ): void {
+    event?.stopPropagation();
+    if (!deliveryId) return;
+    window.location.href = `/bookings/${deliveryId}`;
+  }
+
   toggleCallbackStatus(item: any) {
     const newStatus = !item.concluded;
 

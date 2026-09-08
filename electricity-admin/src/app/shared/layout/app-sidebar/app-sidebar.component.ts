@@ -115,7 +115,7 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
       <path d="M12 17h.01" />
     </svg>`,
       subItems: [
-        { name: "Customer Queries", path: "/customer-query/customer-queries" },
+        { name: "Service Requests", path: "/customer-query/customer-queries" },
         { name: "Contact Queries", path: "/contact-query/list" },
       ],
     },
@@ -276,15 +276,23 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
               </svg>`,
       subItems: [
         {
-          name: 'Report Meter Reading',
-          path: '/open-provider-action/report-meter-reading'
+          name: "Report Meter Reading",
+          path: "/open-provider-action/report-meter-reading",
         },
-                {
-          name: 'Invoice Request',
-          path: '/open-provider-action/customer-invoice-request'
-        }
+        {
+          name: "Invoice Request",
+          path: "/open-provider-action/customer-invoice-request",
+        },
+        {
+          name: "Energy Supplier Messages",
+          path: "/open-provider-action/energy-supplier",
+        },
+        {
+          name: "Change Advance Payment Request",
+          path: "/open-provider-action/change-amount",
+        },
       ],
-    }
+    },
   ];
 
   openSubmenu: string | null = null;

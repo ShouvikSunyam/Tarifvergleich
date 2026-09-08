@@ -9,6 +9,7 @@ import {
   PLATFORM_ID,
   AfterViewInit,
   NgZone,
+  ViewChild,
 } from '@angular/core';
 import { ContactPerson } from '../../layout/contact-person/contact-person';
 import { NeedSupport } from '../../layout/need-support/need-support';
@@ -21,6 +22,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common'; // Added for SSR safety
+import { HostListener } from '@angular/core';
 
 type GrecaptchaV3 = {
   ready(callback: () => void): void;
@@ -43,6 +45,19 @@ type GrecaptchaV3 = {
 })
 export class Contact implements OnInit, AfterViewInit, OnDestroy {
   private scriptElement!: HTMLScriptElement;
+
+  @ViewChild('dropdownContainer') dropdownContainer!: ElementRef;
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (
+      this.showDropdown &&
+      this.dropdownContainer &&
+      !this.dropdownContainer.nativeElement.contains(event.target)
+    ) {
+      this.showDropdown = false;
+    }
+  }
 
   constructor(
     private http: HttpClient,

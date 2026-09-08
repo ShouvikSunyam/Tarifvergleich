@@ -30,7 +30,7 @@ export class TermsConditions implements OnInit {
           console.log('API RESPONSE', res);
 
           this.content = res.find(
-            (item: any) => item.id === 4
+            (item: any) => item.id === 3
           );
           console.log("FILTERED CONTENT", this.content);
           this.cdr.detectChanges();

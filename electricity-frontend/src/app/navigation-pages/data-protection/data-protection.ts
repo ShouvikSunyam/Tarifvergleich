@@ -30,7 +30,7 @@ export class DataProtection implements OnInit {
           console.log('API RESPONSE', res);
 
           this.content = res.find(
-            (item: any) => item.id === 3
+            (item: any) => item.id === 1
           );
           console.log("FILTERED CONTENT", this.content);
           this.cdr.detectChanges();

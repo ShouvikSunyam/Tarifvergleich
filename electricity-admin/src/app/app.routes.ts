@@ -40,6 +40,8 @@ import { ReportMeterReadingCategoryComponent } from "./pages/categories/meter-re
 import { CancellationServiceCategoryComponent } from "./pages/categories/cancellation-category/cancellation-service-category.component";
 import { ReportMeterReadingComponent } from "./pages/open-provider-action/report-meter-reading/report-meter-reading.component";
 import { CustomerInvoiceRequestComponent } from "./pages/open-provider-action/customer-invoice-request/customer-invoice-request.component";
+import { EnergySupplierComponent } from "./pages/open-provider-action/energy-supplier/energy-supplier.component";
+import { ChangeAmountComponent } from "./pages/open-provider-action/change-amount/change-amount.component";
 
 export const routes: Routes = [
   {
@@ -203,6 +205,16 @@ export const routes: Routes = [
         path: "open-provider-action/customer-invoice-request",
         component: CustomerInvoiceRequestComponent,
         title: "Kundenrechnungsanfrage",
+      },
+      {
+        path: "open-provider-action/energy-supplier",
+        component: EnergySupplierComponent,
+        title: "Nachricht an den Energieversorger",
+      },
+      {
+        path: "open-provider-action/change-amount",
+        component: ChangeAmountComponent,
+        title: "Ratenbetrag ändern",
       },
       {
         path: "email-template",

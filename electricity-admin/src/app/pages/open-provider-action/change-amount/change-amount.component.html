@@ -6,7 +6,7 @@
             <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 border border-gray-100 dark:border-gray-800">
             <p class="text-sm text-gray-500">Gesamt Messwerte</p>
             <h3 class="text-3xl font-bold mt-1">
-                {{ reportMeterReadings.length }}
+                {{ customerChangePayment.length }}
             </h3>
             </div>
 
@@ -32,117 +32,95 @@
     <div class="relative flex overflow-hidden rounded-2xl bg-white dark:bg-gray-900 shadow">
         <div class="flex-1 min-w-0 p-6">
 
-            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Messwertmeldungen</h2>
-            <div class="flex items-center gap-2 mb-6">
-                <div class="flex-1">
-                    <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchInput($event)"
-                        placeholder="Suche nach Liefer-ID, Kunden-ID..."
-                        class="w-full px-3 py-2 rounded-lg border border-gray-300" />
-                </div>
-                <div class="relative">
-                    <button (click)="isFilterOpen = !isFilterOpen" class="px-3 py-2 rounded-lg border border-gray-300
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Ratenbetrag ändern</h2>
+            <!-- <div class="flex items-center gap-2 mb-6">
+            <div class="flex-1">
+                <input type="text" [(ngModel)]="searchTerm"
+                (ngModelChange)="onSearchInput($event)"
+                    placeholder="Suche nach Liefer-ID, Kunden-ID..."
+                    class="w-full px-3 py-2 rounded-lg border border-gray-300"/>
+            </div>
+            <div class="relative">
+                <button
+                    (click)="isFilterOpen = !isFilterOpen"
+                    class="px-3 py-2 rounded-lg border border-gray-300
                         dark:border-gray-600 dark:bg-gray-800
                         dark:text-white text-sm bg-white
                         hover:bg-gray-50 dark:hover:bg-gray-700
                         transition flex items-center gap-2 whitespace-nowrap">
 
-                        <!-- <span>Status: {{ getSelectedFilterLabel() }}</span> -->
-                        Kategorie: {{ selectedCategory || 'Alle' }}
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" [class.rotate-180]="isFilterOpen"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <span>Status: {{ getSelectedFilterLabel() }}</span>
 
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                        </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        [class.rotate-180]="isFilterOpen"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
 
-                    </button>
+                    <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
 
-                    @if (isFilterOpen) {
-                    <div class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow z-50">
-
-                        <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" (click)="selectCategory('')">
-                            Alle
-                        </button>
-
-                        @for (category of categories; track category) {
-                        <button class="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                            (click)="selectCategory(category)">
-                            {{ category }}
-                        </button>
-                        }
-                    </div>
-                    }
-                </div>
-
+                </button>
             </div>
+
+        </div> -->
             <table class="w-full text-sm text-left border-collapse">
                 <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
                     <tr>
                         <th class="px-4 py-3 rounded-tl-lg">AUSWEIS</th>
                         <th class="px-4 py-3 rounded-tl-lg">Name</th>
-                        <!-- <th class="px-4 py-3">Delivery ID</th>
-            <th class="px-4 py-3">Order ID</th>
-            <th class="px-4 py-3">Connection ID</th> -->
-                        <th class="px-4 py-3">Kategorie</th>
-                        <th class="px-4 py-3">Ablesedatum</th>
-                        <th class="px-4 py-3">Zählerstand</th>
-                        <th class="px-4 py-3">Bild</th>
+                        <th class="px-4 py-3">Neuer Vorauszahlungsbetrag (€)</th>
+                        <th class="px-4 py-3">Grund der Änderung</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Erstellt am</th>
                         <th class="px-4 py-3 rounded-tr-lg text-right">Aktion</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y dark:divide-gray-700">
-                    @for (reading of reportMeterReadings; track reading.id) {
+                    @for (request of customerChangePayment; track trackById($index, request); let i = $index) {
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
-                        <td class="px-4 py-4"> {{ reading.id }} </td>
+                        <td class="px-4 py-4"> {{ i + 1 }} </td>
                         <td class="px-4 py-4">
                             <div class="flex items-center gap-3">
                                 <!-- Avatar -->
                                 <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-600
                             flex items-center justify-center text-xs font-semibold">
 
-                                    {{ reading.customerName?.charAt(0) }}
+                                    {{ request.customerName?.charAt(0) }}
                                 </div>
                                 <!-- Customer Info -->
                                 <div>
                                     <p class="font-medium text-gray-900 dark:text-white">
-                                        {{ reading.salutation }}. {{ reading.customerName }}
+                                        {{ request.salutation }}. {{ request.customerName }}
                                     </p>
                                     <p class="text-xs text-gray-500">
-                                        {{ reading.customerEmail }}
+                                        {{ request.customerEmail }}
                                     </p>
                                 </div>
 
                             </div>
                         </td>
-                        <!-- <td class="px-4 py-4"> {{ reading.deliveryId || '—' }} </td>
-            <td class="px-4 py-4"> {{ reading.orderId || '—' }} </td>
-            <td class="px-4 py-4"> {{ reading.connectionId || '—' }} </td> -->
-                        <td class="px-4 py-4"> {{ reading.category || '—' }} </td>
-                        <td class="px-4 py-4"> {{ reading.readingDate || '—' }} </td>
-                        <td class="px-4 py-4"> {{ reading.meterReading || '—' }} </td>
+                        <!-- <td class="px-4 py-4"> {{ request.deliveryId || '—' }} </td>
+            <td class="px-4 py-4"> {{ request.orderId || '—' }} </td>
+            <td class="px-4 py-4"> {{ request.connectionId || '—' }} </td> -->
+                        <td class="px-4 py-4"> {{ request.newAdvanceAmount || '—' }} </td>
+                        <td class="px-4 py-4"> {{ request.reason || '—' }} </td>
+
                         <td class="px-4 py-4">
-                            @if (reading.imagePath) {
-                            <a [href]="getImageUrl(reading.imagePath)" target="_blank"
-                                class="text-brand-500 hover:underline">
-                                View
-                            </a>
-                            } @else {
-                            —
-                            }
-                        </td>
-                        <td class="px-4 py-4">
-                            <span class="px-2 py-1 rounded-full text-xs" [ngClass]="reading.status === 1 ? 'bg-green-100 
+                            <span class="px-2 py-1 rounded-full text-xs" [ngClass]="request.status === 1 ? 'bg-green-100 
                     text-green-700' : 'bg-red-100 text-red-700' ">
-                                {{ reading.status === 1 ? 'Active' : 'Inactive' }}
+                                {{ request.status === 1 ? 'Weitergeleitet' : 'Im Gange' }}
                             </span>
                         </td>
-                        <td class="px-4 py-4"> {{ formatDate(reading.createdAt) }} </td>
+                        <td class="px-4 py-4"> {{ formatDate(request.createdAt) }} </td>
 
                         <!-- Actions -->
                         <!-- <td class="px-4 py-4 text-right">
-            <button (click)="openSidebar(reading); $event.stopPropagation()" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg
+            <button (click)="openSidebar(request); $event.stopPropagation()" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg
                      bg-brand-50 text-brand-600 hover:bg-brand-100
                      dark:bg-brand-900/20 dark:text-brand-400 dark:hover:bg-brand-900/40
                      transition cursor-pointer border border-brand-200 dark:border-brand-700/40">
@@ -155,7 +133,7 @@
           </td> -->
 
                         <td class="px-4 py-4 text-right">
-                            <button (click)="openSidebar(reading)" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg
+                            <button (click)="openSidebar(request, i)" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg
                     bg-brand-50 text-brand-600 hover:bg-brand-100
                     dark:bg-brand-900/20 dark:text-brand-400
                     dark:hover:bg-brand-900/40
@@ -178,7 +156,7 @@
             </table>
         </div>
 
-        @if (isSidebarOpen && selectedReading) {
+        @if (isSidebarOpen && selectedRequest) {
         <aside class="w-80 shrink-0 border-l border-gray-200
                 dark:border-gray-700 bg-white
                 dark:bg-gray-900 flex flex-col overflow-hidden">
@@ -196,18 +174,18 @@
                         flex items-center justify-center
                         text-sm font-semibold text-violet-700">
 
-                        {{ customerInitial(selectedReading.customerName) }}
+                        {{ customerInitial(selectedRequest.customerName) }}
 
                     </div>
 
                     <div>
 
                         <p class="font-semibold text-gray-900 dark:text-white">
-                            {{ selectedReading.customerName }}
+                            {{ selectedRequest.customerName }}
                         </p>
 
                         <p class="text-xs text-gray-500">
-                            {{ selectedReading.customerEmail }}
+                            {{ selectedRequest.customerEmail }}
                         </p>
 
                     </div>
@@ -224,22 +202,12 @@
 
                         <div class="flex justify-between">
                             <span>ID</span>
-                            <span>{{ selectedReading.id }}</span>
+                            <span>{{ selectedIndex !== null ? selectedIndex + 1 : '—' }}</span>
                         </div>
 
                         <div class="flex justify-between">
                             <span>Kategorie</span>
-                            <span>{{ selectedReading.category }}</span>
-                        </div>
-
-                        <div class="flex justify-between">
-                            <span>Messdatum</span>
-                            <span>{{ selectedReading.readingDate }}</span>
-                        </div>
-
-                        <div class="flex justify-between">
-                            <span>Zählerstand</span>
-                            <span>{{ selectedReading.meterReading }}</span>
+                            <span>{{ selectedRequest.invoiceCategory }}</span>
                         </div>
 
                     </div>
@@ -256,53 +224,48 @@
 
                         <div class="flex justify-between">
                             <span>Buchungs-ID</span>
-                            <span>#{{ selectedReading.deliveryId?.uniqueDeliveryId || '—' }}</span>
+                            <span>#{{ selectedRequest.deliveryId?.uniqueDeliveryId || '—' }}</span>
                         </div>
 
                         <div class="flex justify-between">
                             <span>Status</span>
                             <span>
-                                {{ getBookingStatus(selectedReading) }}
+                                {{ getBookingStatus(selectedRequest) }}
                             </span>
                         </div>
 
                         <div class="flex justify-between">
                             <span>Erstellt am</span>
                             <span>
-                                {{ formatDate2(selectedReading.bookingCreatedOn) }}
+                                {{ formatDate(selectedRequest.bookingCreatedOn) }}
+                            </span>
+                        </div>
+
+                          <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-semibold">Status</h3>
+                            <span class="px-2 py-1 rounded-full text-xs"
+                                [ngClass]="selectedRequest.status === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'">
+                                {{ selectedRequest.status === 0 ? 'Im Gange' : 'Weitergeleitet' }}
                             </span>
                         </div>
 
                     </div>
 
+                    @if (selectedRequest.status === 0) {
+                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
+                   bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold transition">
+                        An Anbieter senden
+                    </button>
+                    }
+
                 </div>
 
                 <div class="mt-4">
-                    @if (selectedReading.deliveryId) {
-                    <button (click)="openBookingDetails(selectedReading.deliveryId.deliveryId)" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
+                    @if (selectedRequest.deliveryId) {
+                    <button (click)="openBookingDetails(selectedRequest.deliveryId.deliveryId)" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
                             bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold transition">
                         Buchung anzeigen
                     </button>
-                    }
-                </div>
-
-                <div class="rounded-xl bg-gray-50 dark:bg-gray-800 p-4 mt-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-semibold">
-                            Zählerfoto
-                        </h3>
-                        <button (click)="openImageModal()" class="w-6 h-6 rounded-full bg-blue-100 text-blue-700
-                            text-xs font-bold hover:bg-blue-200">
-                            i
-                        </button>
-                    </div>
-
-                    @if (selectedReading.imagePath) {
-                    <img [src]="getImageUrl(selectedReading.imagePath)" alt="Meter Reading" class="w-full rounded-lg" />
-                    } @else {
-                    <div class="text-sm text-gray-500">
-                        Kein Bild verfügbar
-                    </div>
                     }
                 </div>
 
@@ -316,7 +279,7 @@
     @if (!isLoading && errorMessage) {
     <div class="text-center py-12">
         <p class="text-red-500 text-sm mb-3">{{ errorMessage }}</p>
-        <button (click)="fetchReportMeterReadings()"
+        <button (click)="fetchCustomerChangePayment()"
             class="px-4 py-2 text-sm bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition cursor-pointer">
             Erneut versuchen
         </button>
@@ -324,27 +287,8 @@
     }
 
     <!-- Empty -->
-    @if (!isLoading && !errorMessage && reportMeterReadings.length === 0) {
+    @if (!isLoading && !errorMessage && customerChangePayment.length === 0) {
     <div class="text-center py-12 text-gray-400 text-sm">Keine Messwerte gefunden.</div>
-    }
-
-    @if (isImageModalOpen) {
-    <div class="fixed inset-0 z-[9999] flex items-center justify-center
-                bg-black/70">
-        <div class="bg-white dark:bg-gray-900 rounded-xl
-                p-4 max-w-4xl w-[90%]">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-lg">
-                    Zählerfoto
-                </h3>
-                <button (click)="closeImageModal()" class="px-3 py-1 rounded-lg bg-red-500 text-white">
-                    ✕
-                </button>
-            </div>
-            <img [src]="getImageUrl(selectedReading?.imagePath)" class="w-full max-h-[80vh] object-contain rounded-lg"
-                alt="Meter Reading">
-        </div>
-    </div>
     }
 
 </div>
