@@ -78,7 +78,7 @@
             <table class="w-full text-sm text-left border-collapse">
                 <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
                     <tr>
-                        <th class="px-4 py-3 rounded-tl-lg">AUSWEIS</th>
+                        <th class="px-4 py-3">AUSWEIS</th>
                         <th class="px-4 py-3 rounded-tl-lg">Name</th>
                         <!-- <th class="px-4 py-3">Delivery ID</th>
             <th class="px-4 py-3">Order ID</th>
@@ -93,9 +93,9 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y dark:divide-gray-700">
-                    @for (reading of reportMeterReadings; track reading.id) {
+                    @for (reading of reportMeterReadings; track trackById($index, reading); let i = $index) {
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
-                        <td class="px-4 py-4"> {{ reading.id }} </td>
+                        <td class="px-4 py-4"> {{ i + 1 }} </td>
                         <td class="px-4 py-4">
                             <div class="flex items-center gap-3">
                                 <!-- Avatar -->
@@ -126,16 +126,16 @@
                             @if (reading.imagePath) {
                             <a [href]="getImageUrl(reading.imagePath)" target="_blank"
                                 class="text-brand-500 hover:underline">
-                                View
+                                Sicht
                             </a>
                             } @else {
                             —
                             }
                         </td>
                         <td class="px-4 py-4">
-                            <span class="px-2 py-1 rounded-full text-xs" [ngClass]="reading.status === 1 ? 'bg-green-100 
-                    text-green-700' : 'bg-red-100 text-red-700' ">
-                                {{ reading.status === 1 ? 'Active' : 'Inactive' }}
+                            <span class="px-2 py-1 rounded-full text-xs"
+                                [ngClass]="reading.status === 1 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'">
+                                {{ reading.status === 1 ? 'Im Gange' : 'Weitergeleitet' }}
                             </span>
                         </td>
                         <td class="px-4 py-4"> {{ formatDate(reading.createdAt) }} </td>
@@ -155,7 +155,7 @@
           </td> -->
 
                         <td class="px-4 py-4 text-right">
-                            <button (click)="openSidebar(reading)" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg
+                            <button (click)="openSidebar(reading, i)" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg
                     bg-brand-50 text-brand-600 hover:bg-brand-100
                     dark:bg-brand-900/20 dark:text-brand-400
                     dark:hover:bg-brand-900/40
@@ -273,7 +273,22 @@
                             </span>
                         </div>
 
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-semibold">Status</h3>
+                            <span class="px-2 py-1 rounded-full text-xs"
+                                [ngClass]="selectedReading.status === 1 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'">
+                                {{ selectedReading.status === 1 ? 'Im Gange' : 'Weitergeleitet' }}
+                            </span>
+                        </div>
+
                     </div>
+
+                    @if (selectedReading.status === 1) {
+                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
+                   bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold transition">
+                        An Anbieter senden
+                    </button>
+                    }
 
                 </div>
 

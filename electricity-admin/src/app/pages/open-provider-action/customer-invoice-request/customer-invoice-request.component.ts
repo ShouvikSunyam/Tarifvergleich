@@ -171,15 +171,17 @@ export class CustomerInvoiceRequestComponent implements OnInit, OnDestroy {
     console.log(request);
   }
 
-  openSidebar(request: CustomerInvoiceRequest): void {
+  selectedIndex: number | null = null;
+
+  openSidebar(request: CustomerInvoiceRequest, index: number): void {
     if (this.isSidebarOpen && this.selectedRequest?.id === request.id) {
       this.closeSidebar();
       return;
     }
     this.selectedRequest = request;
+    this.selectedIndex = index;
     this.isSidebarOpen = true;
   }
-
   closeSidebar(): void {
     this.selectedRequest = null;
     this.isSidebarOpen = false;
