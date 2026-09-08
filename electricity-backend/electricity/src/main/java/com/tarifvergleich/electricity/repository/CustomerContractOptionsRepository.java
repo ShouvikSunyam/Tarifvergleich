@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.tarifvergleich.electricity.model.CustomerContractOptions;
 
 @Repository
-public interface CustomerContractOptionRepository extends JpaRepository<CustomerContractOption, Integer> {
+public interface CustomerContractOptionsRepository extends JpaRepository<CustomerContractOptions, Integer> {
 
 }

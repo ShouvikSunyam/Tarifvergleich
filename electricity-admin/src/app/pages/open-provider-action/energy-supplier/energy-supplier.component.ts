@@ -13,7 +13,10 @@ export interface CustomerSupplierMessage {
   customerName?: string;
   customerEmail?: string;
   message?: string;
-  deliveryId?: { deliveryId?: number; uniqueDeliveryId?: string };
+  deliveryId?: { deliveryId?: number; uniqueDeliveryId?: string; provider?: {
+      branch?: string;
+    };
+  };
   invoiceCategory?: string;
   status?: number;
   statusLabel: string;
@@ -125,6 +128,9 @@ export class EnergySupplierComponent {
               deliveryId: {
                 deliveryId: detail?.deliveryId,
                 uniqueDeliveryId: detail?.uniqueDeliveryId,
+                provider: {
+                  branch: detail?.provider?.branch,
+                },
               },
               bookingCreatedOn: order?.adminOrderPlacedOn,
               isExpired: order?.isExpired,

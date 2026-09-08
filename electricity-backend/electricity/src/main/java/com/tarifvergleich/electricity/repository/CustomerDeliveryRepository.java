@@ -22,7 +22,7 @@ public interface CustomerDeliveryRepository extends JpaRepository<CustomerDelive
 	void updateMeterNumber(@Param("connectionId") Integer connectionId, @Param("meterNumber") String meterNumber);
 
 	Boolean existsByIdAndAdminAdminIdAndOrderPlaced(Integer id, Integer adminId, Boolean orderPlaced);
-	
+
 	long countByAdminAdminId(Integer adminId);
 
 	Page<CustomerDelivery> findAllByAdminAdminId(Integer adminId, Pageable pageable);
@@ -56,8 +56,7 @@ public interface CustomerDeliveryRepository extends JpaRepository<CustomerDelive
 			+ "   LOWER(addr.zip) LIKE LOWER(CONCAT('%', :search, '%')) OR "
 			+ "   LOWER(addr.city) LIKE LOWER(CONCAT('%', :search, '%')) OR "
 			+ "   LOWER(addr.street) LIKE LOWER(CONCAT('%', :search, '%'))" + ") "
-			+ "AND (:orderPlaced IS NULL OR cd.orderPlaced = :orderPlaced) "
-			+ "AND (:pending IS NULL OR co IS NULL) "
+			+ "AND (:orderPlaced IS NULL OR cd.orderPlaced = :orderPlaced) " + "AND (:pending IS NULL OR co IS NULL) "
 			+ "AND (:openOrder IS NULL OR (co IS NOT NULL AND co.orderStatus = 0 AND co.orderId IS NULL))"
 			+ "AND (:orderPlacedInEgon IS NULL OR (co IS NOT NULL AND co.adminPlacedOrder = :orderPlacedInEgon)) "
 			+ "AND (:docUploaded IS NULL OR (doc IS NOT NULL AND doc.signedFileUrl IS NOT NULL)) "
@@ -66,4 +65,7 @@ public interface CustomerDeliveryRepository extends JpaRepository<CustomerDelive
 			@Param("orderPlaced") Boolean orderPlaced, @Param("pending") Boolean pending,
 			@Param("openOrder") Boolean openOrder, @Param("orderPlacedInEgon") Boolean orderPlacedInEgon,
 			@Param("docUploaded") Boolean docUploaded, @Param("isExpired") Boolean isExpired, Pageable pageable);
+
+	@Query("SELECT DISTINCT c.deliveryType FROM CustomerDelivery c ORDER BY c.deliveryType ASC")
+	List<String> fetchAllDistinctDeliveryTypeOrderByDeliveryTypeAsc();
 }

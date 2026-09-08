@@ -13,7 +13,8 @@ export interface CustomerInvoiceRequest {
   customerName?: string;
   customerEmail?: string;
   message?: string;
-  deliveryId?: number;
+  deliveryId?: any;
+  // deliveryType?: string;
   orderId?: number;
   connectionId?: number;
   invoiceCategory?: string;
@@ -105,7 +106,11 @@ export class CustomerInvoiceRequestComponent implements OnInit, OnDestroy {
             : Array.isArray(res?.data)
               ? res.data
               : [];
-          this.customerInvoiceRequests = data;
+          // this.customerInvoiceRequests = data;
+          this.customerInvoiceRequests = data.sort(
+            (a: CustomerInvoiceRequest, b: CustomerInvoiceRequest) =>
+              (a.id ?? 0) - (b.id ?? 0)
+          );
         },
 
         error: (err: any) => {
