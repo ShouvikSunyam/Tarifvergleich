@@ -44,7 +44,7 @@ public class EnergySupplierMessage {
 	@Column(name = "last_updated_on")
 	private BigInteger lastUpdatedOn;
 
-	@Column(comment = "0 - 'Open Request', 1 - 'In Progress', 2 - 'Forwaded', 3 - 'Admin Rejected'")
+	@Column(comment = "0 - 'In Progress', 1 - 'Forwaded', 3 - 'Admin Rejected'")
 	private Integer status;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -75,7 +75,7 @@ public class EnergySupplierMessage {
 	@PrePersist
 	protected void onCreate() {
 		addedOn = Helper.getCurrentTimeBerlin();
-		status = 1;
+		status = 0;
 	}
 
 	@PreUpdate

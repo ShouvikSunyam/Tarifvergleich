@@ -1,20 +1,20 @@
 package com.tarifvergleich.electricity.service.admin;
 
-import com.tarifvergleich.electricity.exception.InternalServerException;
-import com.tarifvergleich.electricity.model.AdminStaticContent;
-import com.tarifvergleich.electricity.repository.AdminStaticContentRepo;
-import com.tarifvergleich.electricity.util.FileServiceSuperAdmin;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import com.tarifvergleich.electricity.exception.InternalServerException;
+import com.tarifvergleich.electricity.model.AdminStaticContent;
+import com.tarifvergleich.electricity.repository.AdminStaticContentRepo;
+import com.tarifvergleich.electricity.util.FileServiceSuperAdmin;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

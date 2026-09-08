@@ -87,8 +87,10 @@ public class CustomerServiceRequest {
 	@JsonIgnore
 	private AdminUser admin;
 	
-	@Column(name = "counselling_id")
-	private Integer counsellingId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "counselling_id")
+	@JsonIgnore
+	private CustomerRequestCounselling counsellingId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_delivery_id")

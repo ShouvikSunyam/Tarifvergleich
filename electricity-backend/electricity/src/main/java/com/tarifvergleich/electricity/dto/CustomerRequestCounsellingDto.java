@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tarifvergleich.electricity.dto.CustomerDto.CustomerShortDetail;
+import com.tarifvergleich.electricity.model.CustomerOrder;
 import com.tarifvergleich.electricity.model.CustomerRequestCounselling;
 
 import lombok.AllArgsConstructor;
@@ -48,6 +49,7 @@ public class CustomerRequestCounsellingDto {
         private BigInteger createdOn;
         private CustomerShortDetail customer;  
         private Boolean concluded;
+        private Integer deliveryId;
     }
     
     public static CustomerRequestCousellingResponseForAdmin mapCustomerRequestCounsellingResponseForAdmin(CustomerRequestCounselling request) {
@@ -63,6 +65,29 @@ public class CustomerRequestCounsellingDto {
     			.createdOn(request.getCreatedOn())
     			.concluded(request.getConcluded())
     			.customer(request.getCustomer() != null ? CustomerDto.customerShortResponse(request.getCustomer()) : null)
+    			.build();
+    }
+    
+    public static CustomerRequestCousellingResponseForAdmin mapCustomerRequestCounsellingResponseForAdminWithDelivery(CustomerRequestCounselling request) {
+    	if(request == null) return null;
+    	
+    	CustomerOrder order = request.getCustomerOrder();
+    	Integer deliveryId = null;
+    	
+    	if(order != null)
+    		deliveryId = order.getDelivery().getId();
+    	
+    	return CustomerRequestCousellingResponseForAdmin.builder()
+    			.cousellingId(request.getId())
+    			.mobileNumber(request.getMobileNumber())
+    			.weekDay(request.getWeekDay())
+    			.timeSlot(request.getTimeSlot())
+    			.description(request.getDescription())
+    			.scheduleDate(request.getScheduleDate())
+    			.createdOn(request.getCreatedOn())
+    			.concluded(request.getConcluded())
+    			.customer(request.getCustomer() != null ? CustomerDto.customerShortResponse(request.getCustomer()) : null)
+    			.deliveryId(deliveryId)
     			.build();
     }
 }
