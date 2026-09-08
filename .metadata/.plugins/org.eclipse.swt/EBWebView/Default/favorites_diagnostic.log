@@ -1,2 +1,22 @@
 2026-05-12 04:52:46.476: [INFO] OnDoneLoading sync enabled: 0
 2026-05-12 04:53:01.163: [INFO] OnDoneLoading sync enabled: 0
+2026-09-07 13:58:44.559: [INFO] CurrentProfilePath: C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default
+2026-09-07 13:58:44.559: [INFO] Profiles total count: 1
+2026-09-07 13:58:44.559: [INFO] Profile: name=Profile 1 path=C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default lastActive=2026-05-12T04:53:17.692Z
+2026-09-07 13:58:44.559: [INFO] LastUsedProfileDir: C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default
+2026-09-07 13:58:44.559: [INFO] MostRecentlyActiveProfile: name=Profile 1 path=C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default lastActive=2026-05-12T04:53:17.692Z
+2026-09-07 13:58:44.559: [INFO] OnDoneLoading sync enabled: 0
+2026-09-07 13:58:44.559: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2026-09-07 13:58:44.559: [INFO] BookmarksLoadDropped droppedNodes=0
+2026-09-07 13:58:44.559: [INFO] BookmarksSnapshot Startup total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1
+2026-09-07 13:58:57.865: [INFO] BookmarksSnapshot Shutdown total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1
+2026-09-08 05:25:26.732: [INFO] CurrentProfilePath: C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default
+2026-09-08 05:25:26.732: [INFO] Profiles total count: 1
+2026-09-08 05:25:26.732: [INFO] Profile: name=Profile 1 path=C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default lastActive=2026-09-07T13:58:51.838Z
+2026-09-08 05:25:26.732: [INFO] LastUsedProfileDir: C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default
+2026-09-08 05:25:26.732: [INFO] MostRecentlyActiveProfile: name=Profile 1 path=C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default lastActive=2026-09-07T13:58:51.838Z
+2026-09-08 05:25:26.732: [INFO] OnDoneLoading sync enabled: 0
+2026-09-08 05:25:26.732: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2026-09-08 05:25:26.732: [INFO] BookmarksLoadDropped droppedNodes=0
+2026-09-08 05:25:26.732: [INFO] BookmarksSnapshot Startup total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1
+2026-09-08 05:26:31.814: [INFO] BookmarksSnapshot Shutdown total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1
