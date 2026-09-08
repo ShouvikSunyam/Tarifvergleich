@@ -101,7 +101,7 @@ public class CustomerMeterService {
 				continue;
 
 			ReportMeterReadingCategory meterCat = reportMeterReadingCategoryRepo
-					.findByCategoryNameLikeAndAdminAdminId(dto.getCategory().trim().toUpperCase(), dto.getAdminId())
+					.findByIdAndAdminAdminId(Integer.parseInt(dto.getCategory()), dto.getAdminId())
 					.orElseThrow(() -> new InternalServerException("Category not found", HttpStatus.OK));
 
 			String filePath = fileServiceCustomer.saveFile(file, "meter-reading");

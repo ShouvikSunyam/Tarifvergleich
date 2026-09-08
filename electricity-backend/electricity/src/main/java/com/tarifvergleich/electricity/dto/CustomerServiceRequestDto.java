@@ -3,8 +3,10 @@ package com.tarifvergleich.electricity.dto;
 import java.math.BigInteger;
 import java.util.List;
 
+import com.tarifvergleich.electricity.dto.CustomerRequestCounsellingDto.CustomerRequestCousellingResponseForAdmin;
 import com.tarifvergleich.electricity.dto.CustomerServiceRequestMessagesDto.MessageResDto;
 import com.tarifvergleich.electricity.model.Customer;
+import com.tarifvergleich.electricity.model.CustomerDelivery;
 import com.tarifvergleich.electricity.model.CustomerServiceRequest;
 
 import lombok.AllArgsConstructor;
@@ -51,7 +53,7 @@ public class CustomerServiceRequestDto {
 	private String callbackDescription;
 
 	private BigInteger scheduleDate;
-	
+
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Data
@@ -83,6 +85,8 @@ public class CustomerServiceRequestDto {
 		private String fistName;
 		private String lastName;
 		private String email;
+		private Integer deliveryId;
+		private CustomerRequestCousellingResponseForAdmin timeslot;
 	}
 
 	@NoArgsConstructor
@@ -103,6 +107,8 @@ public class CustomerServiceRequestDto {
 		private String fistName;
 		private String lastName;
 		private String email;
+		private CustomerRequestCousellingResponseForAdmin timeslot;
+		private Integer deliveryId;
 		private List<MessageResDto> messages;
 	}
 
@@ -122,6 +128,12 @@ public class CustomerServiceRequestDto {
 	public static CustomerServiceRequestResDtoForListing getAllListings(CustomerServiceRequest serviceRequest) {
 		if (serviceRequest == null)
 			return null;
+		
+		CustomerDelivery delivery = serviceRequest.getCustomerDelivery();
+		Integer deliveryId = null;
+		
+		if(delivery != null)
+			deliveryId = delivery.getId();
 
 		Customer customer = serviceRequest.getCustomer();
 
@@ -131,12 +143,22 @@ public class CustomerServiceRequestDto {
 				.serviceName(serviceRequest.getService().getServiceName()).isOpen(serviceRequest.getIsOpen())
 				.inProgress(serviceRequest.getInProgress()).requestReopenedOn(serviceRequest.getRequestReopenedOn())
 				.fistName(customer.getFirstName()).lastName(customer.getLastName()).email(customer.getEmail())
-				.ticketNumber(serviceRequest.getTicketNumber()).build();
+				.ticketNumber(serviceRequest.getTicketNumber())
+				.timeslot(CustomerRequestCounsellingDto
+						.mapCustomerRequestCounsellingResponseForAdmin(serviceRequest.getCounsellingId()))
+				.deliveryId(deliveryId)
+				.build();
 	}
 
 	public static CustomerServiceRequestResDtoForAdmin getAllListingsForAdmin(CustomerServiceRequest serviceRequest) {
 		if (serviceRequest == null)
 			return null;
+		
+		CustomerDelivery delivery = serviceRequest.getCustomerDelivery();
+		Integer deliveryId = null;
+		
+		if(delivery != null)
+			deliveryId = delivery.getId();
 
 		Customer customer = serviceRequest.getCustomer();
 
@@ -148,6 +170,9 @@ public class CustomerServiceRequestDto {
 				.ticketNumber(serviceRequest.getTicketNumber())
 				.messages(serviceRequest.getCustomerServiceRequestMessages().stream()
 						.map(CustomerServiceRequestMessagesDto::getMessagesResDto).toList())
+				.timeslot(CustomerRequestCounsellingDto
+						.mapCustomerRequestCounsellingResponseForAdmin(serviceRequest.getCounsellingId()))
+				.deliveryId(deliveryId)
 				.fistName(customer.getFirstName()).lastName(customer.getLastName()).email(customer.getEmail()).build();
 	}
 

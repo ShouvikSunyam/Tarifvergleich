@@ -373,7 +373,7 @@ public class AdminServicePointManagementService {
 							pageable);
 
 			Page<CustomerRequestCousellingResponseForAdmin> mappedRequest = counsellingRequests
-					.map(CustomerRequestCounsellingDto::mapCustomerRequestCounsellingResponseForAdmin);
+					.map(CustomerRequestCounsellingDto::mapCustomerRequestCounsellingResponseForAdminWithDelivery);
 
 			return Map.of("res", true, "data", mappedRequest.getContent(), "page",
 					mappedRequest.getPageable().getPageNumber() + 1, "totalPage", mappedRequest.getTotalPages(),
@@ -387,7 +387,7 @@ public class AdminServicePointManagementService {
 						requestDto.getConcluded());
 
 		List<CustomerRequestCousellingResponseForAdmin> mappedRequest = counsellingRequests.stream()
-				.map(CustomerRequestCounsellingDto::mapCustomerRequestCounsellingResponseForAdmin).toList();
+				.map(CustomerRequestCounsellingDto::mapCustomerRequestCounsellingResponseForAdminWithDelivery).toList();
 
 		return Map.of("res", true, "data", mappedRequest, "totalRecords", totalRequests, "totalConsluded",
 				totalConcluded, "totalUnconcluded", totalUnconcluded);

@@ -62,9 +62,9 @@ public class EnergySupplierMessageDto {
 		if (status == null)
 			return "Unknown";
 		return switch (status) {
-		case 0 -> "Offene Anfrage";
-		case 1 -> "In Bearbeitung";
-		case 2 -> "Weitergeleitet";
+		case 0 -> "In Bearbeitung";
+		case 1 -> "Weitergeleitet";
+//		case 2 -> "Weitergeleitet";
 		case 3 -> "Vom Admin abgelehnt";
 		default -> "Unbekannter Status (" + status + ")";
 		};

@@ -521,7 +521,7 @@ public class CustomerDetailService {
 		}
 
 		if (counselling != null) {
-			customerServiceRequest.setCounsellingId(counselling.getId());
+			customerServiceRequest.setCounsellingId(counselling);
 		}
 
 		customerServiceRequest = customerServiceRequestRepo.save(customerServiceRequest);
