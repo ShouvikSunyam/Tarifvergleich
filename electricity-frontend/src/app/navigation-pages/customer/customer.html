@@ -812,6 +812,7 @@
       <div class="no-data-found" *ngIf="!meterList || meterList.length === 0">
         Keine Daten gefunden
       </div>
+      <!-- My Counters -->
       <div class="meter-section" *ngIf="viewSection != 2 && meterList && meterList.length > 0">
         <div class="meter-section-header">Meine Zähler</div>
 
@@ -1020,6 +1021,7 @@
         </div>
       </div> -->
       <br *ngIf="viewSection == 0" />
+      <!-- My Contracts -->
       <div class="meter-section" *ngIf="viewSection != 1 && electricityList && electricityList.length > 0">
         <div class="meter-section-header">Meine Verträge</div>
 
@@ -1246,8 +1248,8 @@
           </div>
         </div>
       </div>
-      <!-- INACTIVE / CANCELLED METERS -->
 
+      <!-- INACTIVE / CANCELLED METERS -->
       <!-- <div class="inactive-meter-section" *ngIf="viewSection != 1">
         <div class="inactive-meter-wrapper">
           <div
@@ -2683,8 +2685,10 @@
             <!-- DYNAMIC FORM FIELDS -->
 
             <!-- LAST NAME -->
-            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(1)" id="last-name-section">
-
+            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(1)" id="last-name-section"
+              style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField(1)"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
               <div class="contract-change-form-title">
                 Nachname ändern
               </div>
@@ -2695,24 +2699,19 @@
 
               <!-- INPUT -->
               <div class="form-row">
-
                 <div class="form-group">
-
-                  <div class="field-wrap">
-
+                  <div class="field-wrap" [class.field-error]="fieldErrors['lastName']">
                     <span class="field-label">
                       Nachname ändern *
                     </span>
-
                     <input type="text" [(ngModel)]="contractChangeData.lastName" placeholder="Nachname ändern" />
-
                   </div>
-
-                </div>
-                <div class="field-error-msg" *ngIf="fieldErrors['lastName']">
-                  {{ fieldErrors['lastName'] }}
                 </div>
               </div>
+              <div class="field-error-msg" *ngIf="fieldErrors['lastName']">
+                {{ fieldErrors['lastName'] }}
+              </div>
+
 
               <!-- FILE UPLOAD -->
 
@@ -2728,12 +2727,20 @@
 
                 <input type="file" (change)="onContractDocumentUpload($event, 'lastName')" />
 
+                <div class="field-error-msg" *ngIf="fieldErrors['lastNameDocument']">
+                  {{ fieldErrors['lastNameDocument'] }}
+                </div>
+
               </div>
 
             </div>
 
+
             <!-- COMPANY NAME -->
-            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(2)" id="company-name-section">
+            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(2)" id="company-name-section"
+              style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField(2)"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
 
               <div class="contract-change-form-title">
                 Firmenname ändern
@@ -2748,7 +2755,7 @@
 
                 <div class="form-group">
 
-                  <div class="field-wrap">
+                  <div class="field-wrap" [class.field-error]="fieldErrors['companyName']">
 
                     <span class="field-label">
                       Firmenname *
@@ -2756,6 +2763,9 @@
                     <input type="text" [(ngModel)]="contractChangeData.companyName" placeholder="Firmenname" />
                   </div>
                 </div>
+              </div>
+              <div class="field-error-msg" *ngIf="fieldErrors['companyName']">
+                {{ fieldErrors['companyName'] }}
               </div>
 
               <!-- FILE UPLOAD -->
@@ -2767,12 +2777,28 @@
 
                 <input type="file" (change)="onContractDocumentUpload($event, 'companyName')" />
 
+                <div class="field-error-msg" *ngIf="fieldErrors['companyNameDocument']">
+                  {{ fieldErrors['companyNameDocument'] }}
+                </div>
+
               </div>
 
             </div>
 
+
             <!-- TITLE -->
-            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(3)" id="title-section">
+            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(3)" id="title-section"
+              style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField(3)"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
+
+              <div class="contract-change-form-title">
+                Titel ändern
+              </div>
+
+              <div class="contract-change-subheading">
+                Bitte laden Sie einen gültigen Nachweis hoch.
+              </div>
 
               <div class="input-field select-wrap" style="display: block;">
                 <div>
@@ -2797,6 +2823,10 @@
 
                 <input type="file" (change)="onContractDocumentUpload($event, 'title')" />
 
+                <div class="field-error-msg" *ngIf="fieldErrors['titleDocument']">
+                  {{ fieldErrors['titleDocument'] }}
+                </div>
+
               </div>
 
             </div>
@@ -2804,8 +2834,9 @@
             <!-- FIRST NAME -->
             <div class="contract-change-form-box"
               *ngIf="submittedSelections.includes(4) || submittedSelections.includes(5)"
-              id="firstname-salutation-section">
-
+              id="firstname-salutation-section" style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField([4, 5])"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
               <div class="contract-change-form-title">
                 Vorname
               </div>
@@ -2814,15 +2845,15 @@
               <div *ngIf="submittedSelections.includes(4)">
 
                 <!-- <input type="text" [(ngModel)]="contractChangeData.firstName" placeholder="Neuer Vorname"
-                  class="contract-change-input" /> -->
+      class="contract-change-input" /> -->
 
-                <div class="field-wrap">
+                <div class="field-wrap" [class.field-error]="fieldErrors['firstName']">
                   <span class="field-label">Vorname</span>
                   <input type="text" [(ngModel)]="contractChangeData.firstName" placeholder="Neuer Vorname" />
                 </div>
-                <!-- <div class="field-error-msg" *ngIf="subAccountFieldErrors['firstName']">
-                  {{ subAccountFieldErrors['firstName'] }}
-                </div> -->
+                <div class="field-error-msg" *ngIf="fieldErrors['firstName']">
+                  {{ fieldErrors['firstName'] }}
+                </div>
 
               </div>
 
@@ -2831,12 +2862,12 @@
                 <br>
 
                 <!-- <input type="text" [(ngModel)]="contractChangeData.salutation" placeholder="Neue Anrede"
-                  class="contract-change-input" /> -->
+      class="contract-change-input" /> -->
                 <div class="form-row">
 
                   <div class="form-group">
 
-                    <div class="field-wrap">
+                    <div class="field-wrap" [class.field-error]="fieldErrors['salutation']">
 
                       <span class="field-label">
                         Anrede
@@ -2844,7 +2875,7 @@
 
                       <div>
                         <!-- <span class="field-label"
-                            style="margin-left: 10px; font-size: 12px; font-weight: 500; display: block">Anrede</span> -->
+                style="margin-left: 10px; font-size: 12px; font-weight: 500; display: block">Anrede</span> -->
                         <select class="styled-select" [(ngModel)]="contractChangeData.salutation">
                           <option value="">Bitte wählen...</option>
                           <option value="Herr">Herr</option>
@@ -2855,6 +2886,9 @@
                         <span class="material-symbols-outlined dropdown-arrow">expand_more</span>
                       </div>
 
+                    </div>
+                    <div class="field-error-msg" *ngIf="fieldErrors['salutation']">
+                      {{ fieldErrors['salutation'] }}
                     </div>
                   </div>
                 </div>
@@ -2868,12 +2902,19 @@
 
                 <input type="file" (change)="onContractDocumentUpload($event, 'personData')" />
 
+                <div class="field-error-msg" *ngIf="fieldErrors['personDataDocument']">
+                  {{ fieldErrors['personDataDocument'] }}
+                </div>
+
               </div>
 
             </div>
 
             <!-- DATE OF BIRTH -->
-            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(6)" id="dob-section">
+            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(6)" id="dob-section"
+              style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField(6)"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
 
               <div class="contract-change-form-title">
                 Geburtsdatum ändern
@@ -2883,7 +2924,7 @@
 
                 <div class="form-group">
 
-                  <div class="field-wrap">
+                  <div class="field-wrap" [class.field-error]="fieldErrors['dateOfBirth']">
 
                     <span class="field-label">
                       Geburtsdatum ändern *
@@ -2893,6 +2934,10 @@
                   </div>
                 </div>
               </div>
+              <div class="field-error-msg" *ngIf="fieldErrors['dateOfBirth']">
+                {{ fieldErrors['dateOfBirth'] }}
+              </div>
+
               <div class="contract-change-upload-box">
 
                 <div class="contract-change-upload-text">
@@ -2901,13 +2946,19 @@
 
                 <input type="file" (change)="onContractDocumentUpload($event, 'dateOfBirth')" />
 
+                <div class="field-error-msg" *ngIf="fieldErrors['dateOfBirthDocument']">
+                  {{ fieldErrors['dateOfBirthDocument'] }}
+                </div>
+
               </div>
 
             </div>
 
-
             <!-- BILLING ADDRESS -->
-            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(7)" id="billing-address-section">
+            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(7)" id="billing-address-section"
+              style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField(7)"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
 
               <div class="contract-change-form-title">
                 Rechnungsadresse ändern
@@ -2917,47 +2968,54 @@
                 <div class="form-group" style="flex: 0 0 160px">
                   <div class="field-wrap" [class.field-error]="fieldErrors['billingPLZ']">
                     <span class="field-label">Ihre PLZ *</span>
-                    <input />
-                    <span *ngIf="fieldErrors['billingPLZ']" class="error-hint">{{
-                      fieldErrors['billingPLZ']
-                      }}</span>
+                    <input [(ngModel)]="contractChangeData.billingPLZ" />
+
                   </div>
+                  <span *ngIf="fieldErrors['billingPLZ']" class="field-error-msg">{{
+                    fieldErrors['billingPLZ']
+                    }}</span>
                 </div>
                 <div class="form-group">
                   <div class="field-wrap" [class.field-error]="fieldErrors['billingOrt']">
                     <span class="field-label">Ort *</span>
-                    <input />
-                    <span *ngIf="fieldErrors['billingOrt']" class="error-hint">{{
-                      fieldErrors['billingOrt']
-                      }}</span>
+                    <input [(ngModel)]="contractChangeData.billingOrt" />
+
                   </div>
+                  <span *ngIf="fieldErrors['billingOrt']" class="field-error-msg">{{
+                    fieldErrors['billingOrt']
+                    }}</span>
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group">
                   <div class="field-wrap" [class.field-error]="fieldErrors['billingStreet']">
                     <span class="field-label">Ihre Straße *</span>
-                    <input />
-                    <span *ngIf="fieldErrors['billingStreet']" class="error-hint">{{
-                      fieldErrors['billingStreet']
-                      }}</span>
+                    <input [(ngModel)]="contractChangeData.billingStreet" />
                   </div>
+                  <span *ngIf="fieldErrors['billingStreet']" class="field-error-msg">{{
+                    fieldErrors['billingStreet']
+                    }}</span>
                 </div>
                 <div class="form-group" style="flex: 0 0 160px">
                   <div class="field-wrap" [class.field-error]="fieldErrors['billingHouseNumber']">
                     <span class="field-label">Hausnummer *</span>
-                    <input />
-                    <span *ngIf="fieldErrors['billingHouseNumber']" class="error-hint">{{
-                      fieldErrors['billingHouseNumber']
-                      }}</span>
+                    <input [(ngModel)]="contractChangeData.billingHouseNumber" />
+
                   </div>
+                  <span *ngIf="fieldErrors['billingHouseNumber']" class="field-error-msg">{{
+                    fieldErrors['billingHouseNumber']
+                    }}</span>
                 </div>
               </div>
 
             </div>
 
+
             <!-- CUSTOMER ADDRESS -->
-            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(8)" id="customer-address-section">
+            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(8)" id="customer-address-section"
+              style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField(8)"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
 
               <div class="contract-change-form-title">
                 Kundenadresse ändern
@@ -2975,7 +3033,7 @@
 
                 <!-- ZIP -->
                 <div class="form-group postcode">
-                  <div class="field-wrap">
+                  <div class="field-wrap" [class.field-error]="addressFieldErrors['zip']">
                     <span class="field-label">Ihre PLZ</span>
 
                     <input type="text" maxlength="5" [value]="customerData.address.zip" placeholder="12345" />
@@ -2988,7 +3046,7 @@
 
                 <!-- CITY -->
                 <div class="form-group">
-                  <div class="field-wrap dropdown-wrapper">
+                  <div class="field-wrap dropdown-wrapper" [class.field-error]="addressFieldErrors['city']">
 
                     <span class="field-label">Ort</span>
 
@@ -3019,7 +3077,7 @@
 
                 <!-- STREET -->
                 <div class="form-group">
-                  <div class="field-wrap dropdown-wrapper">
+                  <div class="field-wrap dropdown-wrapper" [class.field-error]="addressFieldErrors['street']">
 
                     <span class="field-label">Ihre Straße</span>
 
@@ -3052,10 +3110,10 @@
 
                 <!-- HOUSE NUMBER -->
                 <div class="form-group postcode">
-                  <div class="field-wrap">
+                  <div class="field-wrap" [class.field-error]="addressFieldErrors['houseNumber']">
                     <span class="field-label">Hausnummer</span>
 
-                    <input type="text" placeholder="456" />
+                    <input type="text" [(ngModel)]="contractChangeData.deliveryHouseNumber" placeholder="456" />
                   </div>
 
                   <div class="field-error-msg" *ngIf="addressFieldErrors['houseNumber']">
@@ -3067,7 +3125,10 @@
             </div>
 
             <!-- EMAIL -->
-            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(9)" id="email-address-section">
+            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(9)" id="email-address-section"
+              style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField(9)"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
 
               <div class="contract-change-form-title">
                 E-Mail-Adresse ändern
@@ -3077,20 +3138,26 @@
 
                 <div class="form-group">
 
-                  <div class="field-wrap">
+                  <div class="field-wrap" [class.field-error]="fieldErrors['email']">
 
                     <span class="field-label">
                       Neue E-Mail-Adresse *
                     </span>
 
-                    <input type="email" placeholder="Neue E-Mail-Adresse" />
+                    <input type="email" [(ngModel)]="contractChangeData.email" placeholder="Neue E-Mail-Adresse" />
+                  </div>
+                  <div class="field-error-msg" *ngIf="fieldErrors['email']">
+                    {{ fieldErrors['email'] }}
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- BANK -->
-            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(10)" id="bank-details-section">
+            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(10)" id="bank-details-section"
+              style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField(10)"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
 
               <div class="contract-change-form-title">
                 Bankdaten ändern
@@ -3099,12 +3166,15 @@
 
                 <div class="form-group">
 
-                  <div class="field-wrap">
+                  <div class="field-wrap" [class.field-error]="fieldErrors['iban']">
 
                     <span class="field-label">
                       IBAN
                     </span>
-                    <input type="text" placeholder="IBAN" />
+                    <input type="text" [(ngModel)]="contractChangeData.iban" placeholder="IBAN" />
+                  </div>
+                  <div class="field-error-msg" *ngIf="fieldErrors['iban']">
+                    {{ fieldErrors['iban'] }}
                   </div>
                 </div>
               </div>
@@ -3113,38 +3183,77 @@
 
                 <div class="form-group">
 
-                  <div class="field-wrap">
+                  <div class="field-wrap" [class.field-error]="fieldErrors['accountHolder']">
 
                     <span class="field-label">
                       Kontoinhaber
                     </span>
 
-                    <input type="text" placeholder="Kontoinhaber" />
+                    <input type="text" [(ngModel)]="contractChangeData.accountHolder" placeholder="Kontoinhaber" />
+                  </div>
+                  <div class="field-error-msg" *ngIf="fieldErrors['accountHolder']">
+                    {{ fieldErrors['accountHolder'] }}
                   </div>
                 </div>
               </div>
 
             </div>
 
+            <!-- PHONE NUMBER -->
+            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(11)" id="phone-number-section"
+              style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField(11)"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
+
+              <div class="contract-change-form-title">
+                Telefonnummer ändern
+              </div>
+
+              <div class="form-row">
+
+                <div class="form-group">
+
+                  <div class="field-wrap" [class.field-error]="fieldErrors['phoneNumber']">
+
+                    <span class="field-label">
+                      Neue Telefonnummer *
+                    </span>
+
+                    <input type="tel" [(ngModel)]="contractChangeData.phoneNumber" placeholder="Neue Telefonnummer" />
+                  </div>
+                  <div class="field-error-msg" *ngIf="fieldErrors['phoneNumber']">
+                    {{ fieldErrors['phoneNumber'] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- OTHER -->
-            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(11)" id="other-section">
+            <div class="contract-change-form-box" *ngIf="submittedSelections.includes(12)" id="other-section"
+              style="position: relative;">
+              <span class="contract-field-close" (click)="removeContractField(11)"
+                style="position: absolute; top: 10px; right: 12px; cursor: pointer; font-size: 16px; color: red;">✕</span>
 
               <div class="contract-change-form-title">
                 Sonstige Änderung
               </div>
               <!-- <div class="form-row">
 
-                <div class="form-group">
+              <div class="form-group">
 
-                  <div class="field-wrap">
+                <div class="field-wrap">
 
-                    <span class="field-label">
-                      Sonstige Änderung
-                    </span> -->
-              <textarea placeholder="Bitte geben Sie Ihre Anfrage ein" class="contract-change-textarea"></textarea>
+                  <span class="field-label">
+                    Sonstige Änderung
+                  </span> -->
+              <textarea [(ngModel)]="contractChangeData.otherRequest" placeholder="Bitte geben Sie Ihre Anfrage ein"
+                class="contract-change-textarea"></textarea>
+              <div class="field-error-msg" *ngIf="fieldErrors['otherRequest']">
+                {{ fieldErrors['otherRequest'] }}
+              </div>
               <!-- </div>
-                </div>
-              </div> -->
+              </div>
+            </div> -->
             </div>
 
             <br>
