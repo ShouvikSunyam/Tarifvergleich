@@ -176,6 +176,10 @@ public class Customer {
 	@OneToMany(mappedBy = "businessCustomer", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JsonIgnoreProperties("businessCustomer")
 	private List<CustomerInvitation> customerInvitations;
+	
+	@OneToMany(mappedBy = "customer", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JsonIgnoreProperties("customer")
+	private List<CustomerContractEditRequest> editContractRequests;
 
 	@ManyToOne
 	@JoinColumn(name = "admin_id")

@@ -226,13 +226,11 @@ public class CustomerController {
 	public ResponseEntity<?> addSupplierMessage(@RequestBody EnergySupplierMessageDto energySupplierMessageDto) {
 		return ResponseEntity.ok(customerEnergySupplierService.saveSupplierMessage(energySupplierMessageDto));
 	}
-	
-	@PostMapping("/change-discount-request")
-	public ResponseEntity<?> changeDiscountRequest(
-	        @RequestBody CustomerChangeDiscountRequestDto dto) {
 
-	    return ResponseEntity.ok(
-	            customerDetailService.saveChangeDiscountRequest(dto));
+	@PostMapping("/change-discount-request")
+	public ResponseEntity<?> changeDiscountRequest(@RequestBody CustomerChangeDiscountRequestDto dto) {
+
+		return ResponseEntity.ok(customerDetailService.saveChangeDiscountRequest(dto));
 	}
 
 	@PostMapping("/fetch-invoice-categories")
@@ -241,7 +239,20 @@ public class CustomerController {
 	}
 
 	@PostMapping("/fetch-cancellation-service-category")
-	public ResponseEntity<?> fetchCancellationServiceCategories(@RequestBody com.tarifvergleich.electricity.dto.CancellationServiceCategoryDto dto) {
+	public ResponseEntity<?> fetchCancellationServiceCategories(
+			@RequestBody com.tarifvergleich.electricity.dto.CancellationServiceCategoryDto dto) {
 		return ResponseEntity.ok(customerCategoryService.fetchCancellationServiceCategoriesForCustomer(dto));
+	}
+
+	@PostMapping("/edit-contract-details")
+	public ResponseEntity<?> editCustomerContract(
+			@RequestPart(value = "lastNameProof", required = false) MultipartFile lastNameProof,
+			@RequestPart(value = "companyProof", required = false) MultipartFile companyProof,
+			@RequestPart(value = "titleProof", required = false) MultipartFile titleProof,
+			@RequestPart(value = "firstSalProof", required = false) MultipartFile firstSalProof,
+			@RequestPart(value = "dobProof", required = false) MultipartFile dobProof,
+			@RequestPart(value = "metaData", required = true) CustomerContractEditRequestDto editContractDto) {
+		return ResponseEntity.ok(customerUpdateService.updateCustomerContract(lastNameProof, companyProof, titleProof,
+				firstSalProof, dobProof, editContractDto));
 	}
 }
