@@ -291,6 +291,10 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
           name: "Change Advance Payment Request",
           path: "/open-provider-action/change-amount",
         },
+        {
+          name: "Contract Edit Options",
+          path: "/open-provider-action/contract-edit-options",
+        },
       ],
     },
   ];
