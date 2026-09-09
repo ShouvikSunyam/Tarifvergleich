@@ -12,10 +12,11 @@ export interface ReportMeterReading {
   salutation?: string;
   customerName?: string;
   customerEmail?: string;
-  deliveryId?: number;
+  deliveryId?: any;
   orderId?: number;
   connectionId?: number;
   category?: string;
+  // deliveryType?: string;
   readingDate?: string;
   meterReading?: string;
   imagePath?: string;

@@ -29,7 +29,10 @@ public class ReportMeterReading {
 
 	private Integer connectionId;
 	
-	private Integer deliveryId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "delivery_id")
+	@JsonIgnore
+	private CustomerDelivery deliveryId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id")

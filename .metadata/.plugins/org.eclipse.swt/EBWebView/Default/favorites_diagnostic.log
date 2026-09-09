@@ -20,3 +20,13 @@
 2026-09-08 05:25:26.732: [INFO] BookmarksLoadDropped droppedNodes=0
 2026-09-08 05:25:26.732: [INFO] BookmarksSnapshot Startup total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1
 2026-09-08 05:26:31.814: [INFO] BookmarksSnapshot Shutdown total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1
+2026-09-08 05:47:01.953: [INFO] CurrentProfilePath: C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default
+2026-09-08 05:47:01.953: [INFO] Profiles total count: 1
+2026-09-08 05:47:01.953: [INFO] Profile: name=Profile 1 path=C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default lastActive=2026-09-08T05:26:31.576Z
+2026-09-08 05:47:01.953: [INFO] LastUsedProfileDir: C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default
+2026-09-08 05:47:01.953: [INFO] MostRecentlyActiveProfile: name=Profile 1 path=C:\Users\PC\Desktop\Electricity\Tarifvergleich\.metadata\.plugins\org.eclipse.swt\EBWebView\Default lastActive=2026-09-08T05:26:31.576Z
+2026-09-08 05:47:01.953: [INFO] OnDoneLoading sync enabled: 0
+2026-09-08 05:47:01.953: [INFO] BookmarkModelLoaded, ids_reassigned: 0
+2026-09-08 05:47:01.953: [INFO] BookmarksLoadDropped droppedNodes=0
+2026-09-08 05:47:01.953: [INFO] BookmarksSnapshot Startup total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1
+2026-09-08 05:47:06.079: [INFO] BookmarksSnapshot Shutdown total=0 bar=0 other=0 mobile=0 showBar=0 showBarNTP=1

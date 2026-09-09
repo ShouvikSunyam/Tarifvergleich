@@ -268,8 +268,8 @@ public class CustomerDetailService {
 				.collect(Collectors.groupingBy(req -> req.getCustomerDelivery().getId()));
 
 		// STEP 3C: group by deliveryId
-		Map<Integer, List<ReportMeterReading>> meterReadingMap = allMeterReadings.stream()
-				.collect(Collectors.groupingBy(ReportMeterReading::getDeliveryId));
+		Map<CustomerDelivery, List<ReportMeterReading>> meterReadingMap = allMeterReadings.stream()
+				.collect(Collectors.groupingBy(reading -> reading.getDeliveryId()));
 
 		// STEP 4: group invoices by deliveryId
 		Map<Integer, List<CustomerInvoiceRequest>> invoiceMap = allInvoices.stream()
@@ -330,7 +330,7 @@ public class CustomerDetailService {
 
 						meterDto.setId(reading.getId());
 
-						meterDto.setDeliveryId(reading.getDeliveryId());
+						meterDto.setDeliveryId(reading.getDeliveryId().getId());
 
 						meterDto.setOrderId(reading.getOrderId());
 

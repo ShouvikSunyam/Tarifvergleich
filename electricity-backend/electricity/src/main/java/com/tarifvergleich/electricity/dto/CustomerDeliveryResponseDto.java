@@ -121,6 +121,7 @@ public class CustomerDeliveryResponseDto {
 		private String telephone;
 		private BigInteger dob;
 		private Integer persons;
+		private String deliveryType;
 		private Integer consumption;
 		private BigInteger orderPlacedOn;
 		private Boolean orderPlaced;
@@ -201,6 +202,7 @@ public class CustomerDeliveryResponseDto {
 				.uniqueDeliveryId(delivery.getUniqueDeliveryId()).email(delivery.getCustomerId().getEmail())
 				.title(delivery.getTitle()).firstName(delivery.getFirstName()).lastName(delivery.getLastName())
 				.mobile(delivery.getMobile()).persons(delivery.getNumberOfPerson())
+				.deliveryType(delivery.getDeliveryType())
 				.consumption(delivery.getTotalConsumption()).telephone(delivery.getTelephone()).dob(delivery.getDob())
 				.customerAddress(CustomerAddressRes.builder().zip(delivery.getAddress().getZip())
 						.city(delivery.getAddress().getCity()).street(delivery.getAddress().getStreet())

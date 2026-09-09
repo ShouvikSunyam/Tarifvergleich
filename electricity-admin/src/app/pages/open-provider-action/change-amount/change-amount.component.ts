@@ -15,7 +15,10 @@ export interface CustomerChangePayment {
   customerEmail?: string;
   newAdvanceAmount?: string;
   reason?: string;
-  deliveryId?: { deliveryId?: number; uniqueDeliveryId?: string };
+  deliveryId?: { deliveryId?: number; uniqueDeliveryId?: string; provider?: {
+      branch?: string;
+    };
+  };
   status?: number;
   createdAt?: number;
   bookingCreatedOn?: number;
@@ -124,6 +127,9 @@ export class ChangeAmountComponent {
               deliveryId: {
                 deliveryId: detail?.deliveryId,
                 uniqueDeliveryId: detail?.uniqueDeliveryId,
+                provider: {
+                  branch: detail?.provider?.branch,
+                },
               },
               bookingCreatedOn: order?.adminOrderPlacedOn,
               isExpired: order?.isExpired,
