@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.tarifvergleich.electricity.dto.EnergySupplierMessageCategoryDto;
 import com.tarifvergleich.electricity.dto.ListOfHolidaysDto;
 import com.tarifvergleich.electricity.dto.ReportMeterReadingDto;
+import com.tarifvergleich.electricity.service.customer.CustomerCategoryService;
 import com.tarifvergleich.electricity.service.customer.CustomerDetailService;
 import com.tarifvergleich.electricity.service.customer.CustomerEnergySupplierService;
 import com.tarifvergleich.electricity.service.customer.CustomerGeneralService;
@@ -32,6 +33,7 @@ public class CustomerPublicController {
 	private final CustomerGeneralService customerGeneralService;
 	private final CustomerEnergySupplierService customerEnergySupplierService;
 	private final CustomerMeterService customerMeterService;
+	private final CustomerCategoryService customerCategoryService;
 
 	@PostMapping("/add-contract-signature")
 	public ResponseEntity<?> addCustomerContractSignatures(@RequestPart("data") String token,
@@ -67,5 +69,10 @@ public class CustomerPublicController {
 	@PostMapping("/fetch-report-meter-reading-category")
 	public ResponseEntity<?> fetchAllReportMeterReadingCategory(@RequestBody ReportMeterReadingDto categoryDto) {
 		return ResponseEntity.ok(customerMeterService.fetchCustomerReportMeterReading(categoryDto));
+	}
+
+	@PostMapping("/fetch-contract-edit-options")
+	public ResponseEntity<?> fetchAllContractEditOption() {
+		return ResponseEntity.ok(customerCategoryService.fetchContractEditOptions());
 	}
 }
