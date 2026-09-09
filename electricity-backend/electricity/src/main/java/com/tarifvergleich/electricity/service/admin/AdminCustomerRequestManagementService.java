@@ -3,31 +3,26 @@ package com.tarifvergleich.electricity.service.admin;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarifvergleich.electricity.dto.CustomerChangeDiscountRequestDto;
 import com.tarifvergleich.electricity.dto.CustomerChangeDiscountRequestDto.CustomerChangeDiscountAdminResponseDto;
+import com.tarifvergleich.electricity.dto.CustomerContractCancellationRequestDto;
+import com.tarifvergleich.electricity.dto.CustomerContractCancellationRequestDto.CustomerContractCancellationRequestAdminResDto;
+import com.tarifvergleich.electricity.dto.CustomerContractEditRequestDto;
+import com.tarifvergleich.electricity.dto.CustomerContractEditRequestDto.CustomerContractEditRequestAdminResponseDto;
 import com.tarifvergleich.electricity.exception.InternalServerException;
 import com.tarifvergleich.electricity.model.CustomerChangeDiscountRequest;
-import com.tarifvergleich.electricity.repository.AdminSignatureRepository;
-import com.tarifvergleich.electricity.repository.CustomerBookingDocumentRepository;
+import com.tarifvergleich.electricity.model.CustomerContractCancellationRequest;
+import com.tarifvergleich.electricity.model.CustomerContractEditRequest;
 import com.tarifvergleich.electricity.repository.CustomerChangeDiscountRequestRepository;
-import com.tarifvergleich.electricity.repository.CustomerDeliveryRepository;
-import com.tarifvergleich.electricity.repository.CustomerOrderRepository;
-import com.tarifvergleich.electricity.repository.EnergySupplierMessageRepository;
-import com.tarifvergleich.electricity.service.ElectricityComparisonService;
-import com.tarifvergleich.electricity.service.EnergyService;
-import com.tarifvergleich.electricity.service.customer.CustomerBookingService;
-import com.tarifvergleich.electricity.util.EmailBodyRender;
+import com.tarifvergleich.electricity.repository.CustomerContractCancellationRequestRepository;
+import com.tarifvergleich.electricity.repository.CustomerContractEditRequestRepository;
 import com.tarifvergleich.electricity.util.FileServiceCustomer;
-import com.tarifvergleich.electricity.util.FileServiceSuperAdmin;
-import com.tarifvergleich.electricity.util.Helper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,21 +31,9 @@ import lombok.RequiredArgsConstructor;
 public class AdminCustomerRequestManagementService {
 
 	private final CustomerChangeDiscountRequestRepository customerChangeDiscountRequestRepo;
-	private final CustomerDeliveryRepository customerDeliveryRepo;
-	private final EnergySupplierMessageRepository energySupplierMessageRepo;
-	private final Helper helper;
-	private final ElectricityComparisonService electricityComparisonService;
-	private final ObjectMapper objectMapper;
-	private final CustomerBookingService customerBookingService;
-	private final EnergyService energyService;
+	private final CustomerContractEditRequestRepository customerContractEditRequestRepo;
+	private final CustomerContractCancellationRequestRepository customerContractCancellationRequestRepo;
 	private final FileServiceCustomer fileServiceCustomer;
-	private final FileServiceSuperAdmin fileServiceSuperAdmin;
-	private final CustomerOrderRepository customerOrderRepo;
-	private final CustomerBookingDocumentRepository customerBookingDocumentRepo;
-	private final AdminSignatureRepository adminSignatureRepo;
-	private final AsyncServiceAdmin asyncServiceAdmin;
-	private final ApplicationEventPublisher eventPublisher;
-	private final EmailBodyRender emailBodyRender;
 
 	public Map<String, Object> fetchCustomerChangeDiscountRequests(
 			CustomerChangeDiscountRequestDto changeDiscountRequestDto) {
@@ -84,6 +67,73 @@ public class AdminCustomerRequestManagementService {
 				.map(CustomerChangeDiscountRequestDto::mapAdminResponse).toList();
 
 		return Map.of("res", true, "data", requestRes);
+	}
+
+	public Map<String, Object> fetchCustomerCntractEditRequest(CustomerContractEditRequestDto editContractDto) {
+
+		if (editContractDto == null || editContractDto.getAdminId() == 0)
+			throw new InternalServerException("Insufficient credenials", HttpStatus.OK);
+
+		if (editContractDto.getPage() != null && editContractDto.getPage() > 0) {
+
+			if (editContractDto.getSize() == null || editContractDto.getSize() < 1)
+				editContractDto.setSize(10);
+
+			Pageable pageable = PageRequest.of(editContractDto.getPage() - 1, editContractDto.getSize());
+
+			Page<CustomerContractEditRequest> requests = customerContractEditRequestRepo
+					.findAllByAdminAdminIdOrderByCreatedOnDesc(editContractDto.getAdminId(), pageable);
+
+			Page<CustomerContractEditRequestAdminResponseDto> requestResp = requests
+					.map(req -> CustomerContractEditRequestDto.mapAdminResponse(req, fileServiceCustomer));
+
+			return Map.of("res", true, "data", requestResp.getContent(), "page",
+					requestResp.getPageable().getPageNumber() + 1, "totalPage", requestResp.getTotalPages());
+		}
+
+		List<CustomerContractEditRequest> requests = customerContractEditRequestRepo
+				.findAllByAdminAdminIdOrderByCreatedOnDesc(editContractDto.getAdminId());
+
+		List<CustomerContractEditRequestAdminResponseDto> requestRep = requests.stream()
+				.map(req -> CustomerContractEditRequestDto.mapAdminResponse(req, fileServiceCustomer)).toList();
+
+		return Map.of("res", true, "data", requestRep);
+	}
+	
+	public Map<String, Object> fetchCustomerContractCancellationRequest(CustomerContractCancellationRequestDto cancellationDto) {
+
+	    if (cancellationDto == null || cancellationDto.getAdminId() == null || cancellationDto.getAdminId() == 0)
+	        throw new InternalServerException("Insufficient credentials", HttpStatus.OK);
+
+	    if (cancellationDto.getPage() != null && cancellationDto.getPage() > 0) {
+
+	        if (cancellationDto.getSize() == null || cancellationDto.getSize() < 1)
+	            cancellationDto.setSize(10);
+
+	        Pageable pageable = PageRequest.of(cancellationDto.getPage() - 1, cancellationDto.getSize());
+
+	        Page<CustomerContractCancellationRequest> requests = customerContractCancellationRequestRepo
+	                .findAllByAdminAdminIdOrderByCreatedOnDesc(cancellationDto.getAdminId(), pageable);
+
+	        Page<CustomerContractCancellationRequestAdminResDto> requestResp = requests
+	                .map(CustomerContractCancellationRequestDto::mapAdminRes);
+
+	        return Map.of(
+	            "res", true, 
+	            "data", requestResp.getContent(), 
+	            "page", requestResp.getPageable().getPageNumber() + 1, 
+	            "totalPage", requestResp.getTotalPages()
+	        );
+	    }
+
+	    List<CustomerContractCancellationRequest> requests = customerContractCancellationRequestRepo
+	            .findAllByAdminAdminIdOrderByCreatedOnDesc(cancellationDto.getAdminId());
+
+	    List<CustomerContractCancellationRequestAdminResDto> requestResp = requests.stream()
+	            .map(CustomerContractCancellationRequestDto::mapAdminRes)
+	            .toList();
+
+	    return Map.of("res", true, "data", requestResp);
 	}
 
 }

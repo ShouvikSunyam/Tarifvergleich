@@ -10,9 +10,11 @@ import com.tarifvergleich.electricity.dto.CancellationServiceCategoryDto;
 import com.tarifvergleich.electricity.dto.EnergySupplierInvoiceCategoryDto;
 import com.tarifvergleich.electricity.exception.InternalServerException;
 import com.tarifvergleich.electricity.model.CancellationServiceCategory;
+import com.tarifvergleich.electricity.model.CustomerContractCancellationCategory;
 import com.tarifvergleich.electricity.model.CustomerContractEditOptions;
 import com.tarifvergleich.electricity.model.EnergySupplierInvoiceCategory;
 import com.tarifvergleich.electricity.repository.CancellationServiceCategoryRepo;
+import com.tarifvergleich.electricity.repository.CustomerContractCancellationCategoryRepository;
 import com.tarifvergleich.electricity.repository.CustomerContractEditOptionsRepository;
 import com.tarifvergleich.electricity.repository.EnergySupplierInvoiceCategoryRepository;
 
@@ -25,6 +27,7 @@ public class CustomerCategoryService {
 	private final EnergySupplierInvoiceCategoryRepository energyInvoiceMessageCategoryRepo;
 	private final CancellationServiceCategoryRepo cancellationServiceCategoryRepo;
 	private final CustomerContractEditOptionsRepository contractOptionsRepo;
+	private final CustomerContractCancellationCategoryRepository customerContractCancellationCategoryRepo;
 
 	public Map<String, Object> fetchInvoiceCategoriesForCustomer(EnergySupplierInvoiceCategoryDto dto) {
 		if (dto == null || dto.getAdminId() == null || dto.getAdminId() <= 0) {
@@ -53,6 +56,12 @@ public class CustomerCategoryService {
 		List<CustomerContractEditOptions> options = contractOptionsRepo.findAll();
 
 		return Map.of("res", true, "contractOptionsList", options);
+	}
+
+	public Map<String, Object> fetchContractCancellationCategory() {
+		List<CustomerContractCancellationCategory> categories = customerContractCancellationCategoryRepo.findAll();
+
+		return Map.of("res", true, "data", categories);
 	}
 
 }
