@@ -192,6 +192,10 @@ public class AdminUser {
 	@OneToMany(mappedBy = "admin", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
 	@JsonIgnoreProperties("admin")
 	private List<CustomerInvitation> customerInvitation;
+	
+	@OneToMany(mappedBy = "admin", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JsonIgnoreProperties("admin")
+	private List<CustomerContractEditRequest> customerEditContractRequests;
 
 	@PrePersist
 	protected void onCreate() {
