@@ -174,6 +174,7 @@ export class Customer {
     this.submittedEnergyMessage = false;
     this.submittedCallback = false;
     this.submittedInvoice = false;
+    this.contractChangeSuccess = false;
     this.submittedReportMeterReading = false;
     this.supplierMessageCategory = 0;
     this.cdr.detectChanges();
@@ -231,6 +232,15 @@ export class Customer {
     this.cdr.detectChanges();
   }
 
+  cancellationService(item?: any) {
+    this.nextStep(9);
+    this.loadAvailableDays();
+    if (item) {
+      this.selectedMeter = item;
+    }
+    this.cdr.detectChanges();
+  }
+
   messageEnergySupplier(item?: any) {
     this.nextStep(6);
 
@@ -254,6 +264,7 @@ export class Customer {
       this.selectedMeter = item;
 
       this.contractChangeData = {
+        deliveryId: item?.deliveryId ?? item?.id ?? null,
         lastName: item?.personLastName || '',
         companyName: item?.personCompanyName || '',
         title: item?.personTitle || '',
@@ -335,6 +346,7 @@ export class Customer {
     this.fetchInvoiceCategories();
     this.checkAttorneyStatus();
     this.fetchContractEditOptions();
+    this.fetchCancellationCategories();
   }
 
   handleQRLogin(data: string) {
@@ -1650,11 +1662,11 @@ export class Customer {
   getSupplierMessageStatus(item: any): string {
     const status = Number(item?.supplierMessage?.[0]?.status);
 
-    if (status === 0) {
+    if (status === 1) {
       return 'Im Gange';
     }
 
-    if (status === 1) {
+    if (status === 2) {
       return 'Weitergeleitet';
     }
 
@@ -1837,14 +1849,41 @@ export class Customer {
     });
   }
 
-  onContractDocumentUpload(event: any, type: string): void {
-    const file = event.target.files?.[0];
+  private readonly allowedDocumentTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/jpg',
+    'image/webp',
+    'application/pdf',
+  ];
+  private readonly allowedDocumentExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
 
-    if (!file) return;
+  onContractDocumentUpload(event: Event, key: string): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
 
-    this.uploadedContractDocuments[type] = file;
+    if (!file) {
+      return;
+    }
 
-    delete this.fieldErrors[`${type}Document`];
+    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    const isValidType =
+      this.allowedDocumentTypes.includes(file.type) ||
+      this.allowedDocumentExtensions.includes(fileExtension);
+
+    if (!isValidType) {
+      this.fieldErrors[`${key}Document`] = 'Nur Bild- oder PDF-Dateien sind erlaubt.';
+      this.uploadedContractDocuments[key] = null;
+      input.value = ''; // reset the input so the invalid file isn't stuck in the picker
+      this.cdr.detectChanges();
+      return;
+    }
+
+    // clear any previous error for this field
+    delete this.fieldErrors[`${key}Document`];
+
+    this.uploadedContractDocuments[key] = file;
+    this.cdr.detectChanges();
   }
 
   getContractOptionLabel(id: number): string {
@@ -2052,10 +2091,11 @@ export class Customer {
       this.cdr.markForCheck();
     }
   };
+  contractChangeSuccess = false;
+  contractChangeSuccessMessage = '';
 
   submitContractChanges(): void {
     if (!this.validateContractChanges()) {
-      // scroll to the first error box so the user sees it
       setTimeout(() => {
         const firstErrorEl = document.querySelector('.field-error, .error-hint');
         firstErrorEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2063,19 +2103,105 @@ export class Customer {
       return;
     }
 
-    const payload = {
-      selectedFields: this.submittedSelections,
-      data: this.contractChangeData,
-      documents: this.uploadedContractDocuments,
+    const formData = new FormData();
+    const deliveryId = this.contractChangeData?.deliveryId ?? this.selectedMeter?.id;
+
+    if (!deliveryId) {
+      console.error('deliveryId is missing — check selectedMeter/contractChangeData source');
+      return;
+    }
+
+    const jsonPayload: any = {
+      selectedOption: this.submittedSelections,
+      deliveryId: deliveryId,
     };
+    // 1 — Last name
+    if (this.submittedSelections.includes(1)) {
+      jsonPayload.lastName = this.contractChangeData.lastName;
+      if (this.uploadedContractDocuments['lastName']) {
+        formData.append('lastNameProof', this.uploadedContractDocuments['lastName']);
+      }
+    }
 
-    console.log('Submitting contract changes:', payload);
+    // 2 — Company name
+    if (this.submittedSelections.includes(2)) {
+      jsonPayload.companyName = this.contractChangeData.companyName;
+      if (this.uploadedContractDocuments['companyName']) {
+        formData.append('companyProof', this.uploadedContractDocuments['companyName']);
+      }
+    }
 
-    this.http.post<any>(`${API_BASE}/customer/update-contract-details`, payload).subscribe({
+    // 3 — Title
+    if (this.submittedSelections.includes(3)) {
+      jsonPayload.title = this.contractChangeData.title;
+      if (this.uploadedContractDocuments['title']) {
+        formData.append('titleProof', this.uploadedContractDocuments['title']);
+      }
+    }
+
+    // 4 / 5 — First name & salutation (shared ID proof)
+    if (this.submittedSelections.includes(4) || this.submittedSelections.includes(5)) {
+      if (this.submittedSelections.includes(4)) {
+        jsonPayload.firstName = this.contractChangeData.firstName;
+      }
+      if (this.submittedSelections.includes(5)) {
+        jsonPayload.salutation = this.contractChangeData.salutation;
+      }
+      if (this.uploadedContractDocuments['personData']) {
+        formData.append('firstSalProof', this.uploadedContractDocuments['personData']);
+      }
+    }
+
+    // 6 — Date of birth
+    if (this.submittedSelections.includes(6)) {
+      jsonPayload.dob = this.contractChangeData.dateOfBirth;
+      if (this.uploadedContractDocuments['dateOfBirth']) {
+        formData.append('dobProof', this.uploadedContractDocuments['dateOfBirth']);
+      }
+    }
+
+    // 9 — Email
+    if (this.submittedSelections.includes(9)) {
+      jsonPayload.email = this.contractChangeData.email;
+    }
+
+    // 11 — Phone number
+    if (this.submittedSelections.includes(11)) {
+      jsonPayload.phoneNumber = this.contractChangeData.phoneNumber;
+    }
+
+    // 12 — Other
+    if (this.submittedSelections.includes(12)) {
+      jsonPayload.others = this.contractChangeData.otherRequest;
+    }
+
+    // 7 (billing address), 8 (customer/delivery address), 10 (bank) skipped for now —
+    // will be wired in separately once their submit flow is finalized.
+
+    formData.append(
+      'metaData',
+      new Blob([JSON.stringify(jsonPayload)], { type: 'application/json' }),
+    );
+
+    this.http.post<any>(`${API_BASE}/customer/edit-contract-details`, formData).subscribe({
       next: (res) => {
         if (res?.res) {
           console.log('Contract details updated successfully');
+
+          this.contractChangeSuccessMessage =
+            res?.message || 'Ihre Anfrage wurde erfolgreich gesendet.';
+          this.contractChangeSuccess = true;
+
           this.resetContractChangeForm();
+          this.cdr.detectChanges();
+
+          // auto redirect back to step 1 after showing success for a bit
+          setTimeout(() => {
+            this.contractChangeSuccess = false;
+            // this.activeTab = 1;
+            // this.currentStep = 1; // or whatever the "start" step is
+            this.cdr.detectChanges();
+          }, 3000);
         } else {
           console.error('Update failed', res);
         }
@@ -2200,6 +2326,45 @@ export class Customer {
         console.error('API Error:', err);
       },
     });
+  }
+
+  /* Cancellation Service */
+
+  cancellationCategories: { id: number; categoryName: string; status: number }[] = [];
+
+  cancellationData: any = {
+    categoryId: '',
+    // ...other cancellation fields
+  };
+  fetchCancellationCategories(): void {
+    this.http.post<any>(`${API_BASE}/customer/fetch-contract-cancellation-category`, {}).subscribe({
+      next: (res) => {
+        if (res?.res && Array.isArray(res.data)) {
+          // only show active categories
+          this.cancellationCategories = res.data.filter((c: any) => c.status === 1);
+        } else {
+          console.error('Failed to load cancellation categories', res);
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error fetching cancellation categories', err);
+      },
+    });
+  }
+
+  openDatePicker(input: HTMLInputElement): void {
+    if (typeof input.showPicker === 'function') {
+      input.showPicker();
+    } else {
+      input.focus();
+    }
+  }
+
+  onTerminationTypeChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.cancellationData.terminationType = value;
+    this.cdr.detectChanges();
   }
 
   /*── Meter Section end ──*/
