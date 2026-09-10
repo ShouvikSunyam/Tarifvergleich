@@ -90,6 +90,7 @@ public class CustomerDeliveryResponseDto {
 		private Boolean notificationEnabled;
 		private String deliveryType;
 		private Integer rateType;
+		private Integer requestcancellation;
 
 		private CustomerAddressRes customerAddress;
 		private CustomerBillingAddressRes billingAddress;
@@ -175,6 +176,10 @@ public class CustomerDeliveryResponseDto {
 				.orderStatus(CustomerOrderStatusRecordDto.mapForCustomerDeliveryDetails(delivery.getCustomerOrder()))
 				.notificationEnabled(delivery.getNotificationEnabled()).rateType(delivery.getRateType())
 				.deliveryType(delivery.getDeliveryType())
+				.requestcancellation(delivery.getCustomerContractCancellationRequests() != null
+						&& delivery.getCustomerContractCancellationRequests().size() > 0
+								? delivery.getCustomerContractCancellationRequests().getLast().getStatus()
+								: 0)
 //				.admin(
 //					    admin.getAdminSignature() != null
 //					        ? AdminSignatureDto.builder()
@@ -202,8 +207,8 @@ public class CustomerDeliveryResponseDto {
 				.uniqueDeliveryId(delivery.getUniqueDeliveryId()).email(delivery.getCustomerId().getEmail())
 				.title(delivery.getTitle()).firstName(delivery.getFirstName()).lastName(delivery.getLastName())
 				.mobile(delivery.getMobile()).persons(delivery.getNumberOfPerson())
-				.deliveryType(delivery.getDeliveryType())
-				.consumption(delivery.getTotalConsumption()).telephone(delivery.getTelephone()).dob(delivery.getDob())
+				.deliveryType(delivery.getDeliveryType()).consumption(delivery.getTotalConsumption())
+				.telephone(delivery.getTelephone()).dob(delivery.getDob())
 				.customerAddress(CustomerAddressRes.builder().zip(delivery.getAddress().getZip())
 						.city(delivery.getAddress().getCity()).street(delivery.getAddress().getStreet())
 						.houseNumber(delivery.getAddress().getHouseNumber()).build())

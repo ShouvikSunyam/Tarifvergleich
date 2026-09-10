@@ -26,7 +26,7 @@ public interface CustomerRequestCounsellingRepository extends JpaRepository<Cust
 
 	@Query("SELECT c FROM CustomerRequestCounselling c WHERE c.admin.adminId = :adminId AND (:concluded IS NULL OR c.concluded = :concluded)")
 	Page<CustomerRequestCounselling> findAllByAdminAdminIdAndOptionalConclude(@Param("adminId") Integer adminId,
-			@Param("concluded") Boolean concluded, Pageable pageable);;
+			@Param("concluded") Boolean concluded, Pageable pageable);
 
 	Long countAllByAdminAdminIdAndConcluded(Integer adminId, Boolean concluded);
 

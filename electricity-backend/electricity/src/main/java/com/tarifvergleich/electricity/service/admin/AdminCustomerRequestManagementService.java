@@ -18,12 +18,14 @@ import com.tarifvergleich.electricity.dto.CustomerContractEditRequestDto.Custome
 import com.tarifvergleich.electricity.exception.InternalServerException;
 import com.tarifvergleich.electricity.model.CustomerChangeDiscountRequest;
 import com.tarifvergleich.electricity.model.CustomerContractCancellationRequest;
+import com.tarifvergleich.electricity.model.CustomerContractEditOptions;
 import com.tarifvergleich.electricity.model.CustomerContractEditRequest;
 import com.tarifvergleich.electricity.repository.CustomerChangeDiscountRequestRepository;
 import com.tarifvergleich.electricity.repository.CustomerContractCancellationRequestRepository;
 import com.tarifvergleich.electricity.repository.CustomerContractEditRequestRepository;
 import com.tarifvergleich.electricity.util.FileServiceCustomer;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -99,41 +101,83 @@ public class AdminCustomerRequestManagementService {
 
 		return Map.of("res", true, "data", requestRep);
 	}
-	
-	public Map<String, Object> fetchCustomerContractCancellationRequest(CustomerContractCancellationRequestDto cancellationDto) {
 
-	    if (cancellationDto == null || cancellationDto.getAdminId() == null || cancellationDto.getAdminId() == 0)
-	        throw new InternalServerException("Insufficient credentials", HttpStatus.OK);
+	public Map<String, Object> fetchCustomerContractCancellationRequest(
+			CustomerContractCancellationRequestDto cancellationDto) {
 
-	    if (cancellationDto.getPage() != null && cancellationDto.getPage() > 0) {
+		if (cancellationDto == null || cancellationDto.getAdminId() == null || cancellationDto.getAdminId() == 0)
+			throw new InternalServerException("Insufficient credentials", HttpStatus.OK);
 
-	        if (cancellationDto.getSize() == null || cancellationDto.getSize() < 1)
-	            cancellationDto.setSize(10);
+		if (cancellationDto.getPage() != null && cancellationDto.getPage() > 0) {
 
-	        Pageable pageable = PageRequest.of(cancellationDto.getPage() - 1, cancellationDto.getSize());
+			if (cancellationDto.getSize() == null || cancellationDto.getSize() < 1)
+				cancellationDto.setSize(10);
 
-	        Page<CustomerContractCancellationRequest> requests = customerContractCancellationRequestRepo
-	                .findAllByAdminAdminIdOrderByCreatedOnDesc(cancellationDto.getAdminId(), pageable);
+			Pageable pageable = PageRequest.of(cancellationDto.getPage() - 1, cancellationDto.getSize());
 
-	        Page<CustomerContractCancellationRequestAdminResDto> requestResp = requests
-	                .map(CustomerContractCancellationRequestDto::mapAdminRes);
+			Page<CustomerContractCancellationRequest> requests = customerContractCancellationRequestRepo
+					.findAllByAdminAdminIdOrderByCreatedOnDesc(cancellationDto.getAdminId(), pageable);
 
-	        return Map.of(
-	            "res", true, 
-	            "data", requestResp.getContent(), 
-	            "page", requestResp.getPageable().getPageNumber() + 1, 
-	            "totalPage", requestResp.getTotalPages()
-	        );
-	    }
+			Page<CustomerContractCancellationRequestAdminResDto> requestResp = requests
+					.map(CustomerContractCancellationRequestDto::mapAdminRes);
 
-	    List<CustomerContractCancellationRequest> requests = customerContractCancellationRequestRepo
-	            .findAllByAdminAdminIdOrderByCreatedOnDesc(cancellationDto.getAdminId());
+			return Map.of("res", true, "data", requestResp.getContent(), "page",
+					requestResp.getPageable().getPageNumber() + 1, "totalPage", requestResp.getTotalPages());
+		}
 
-	    List<CustomerContractCancellationRequestAdminResDto> requestResp = requests.stream()
-	            .map(CustomerContractCancellationRequestDto::mapAdminRes)
-	            .toList();
+		List<CustomerContractCancellationRequest> requests = customerContractCancellationRequestRepo
+				.findAllByAdminAdminIdOrderByCreatedOnDesc(cancellationDto.getAdminId());
 
-	    return Map.of("res", true, "data", requestResp);
+		List<CustomerContractCancellationRequestAdminResDto> requestResp = requests.stream()
+				.map(CustomerContractCancellationRequestDto::mapAdminRes).toList();
+
+		return Map.of("res", true, "data", requestResp);
+	}
+
+	@Transactional
+	public Map<String, Object> markContractChanges(CustomerContractEditRequestDto editRequest) {
+
+		if (editRequest == null || editRequest.getCustomerContractEditId() == null
+				|| editRequest.getCustomerContractEditId() < 1)
+			throw new InternalServerException("Contract request id missing", HttpStatus.OK);
+
+		CustomerContractEditRequest request = customerContractEditRequestRepo
+				.findById(editRequest.getCustomerContractEditId())
+				.orElseThrow(() -> new InternalServerException("Contract edit request not found with this credential",
+						HttpStatus.OK));
+
+		CustomerContractEditOptions option = request.getSelectedOption();
+
+		switch (option.getContractEditOptionName().toLowerCase()) {
+		case "last name" -> {
+
+		}
+
+		case "company name" -> {
+			
+		}
+		
+		case "title" -> {
+			
+		}
+		
+		case "first name" -> {
+			
+		}
+		
+		case "salutation" -> {
+			
+		}
+		
+		case "date of birth" -> {
+			
+		}
+
+		default ->
+			throw new IllegalArgumentException("Unexpected value: " + option.getContractEditOptionName().toLowerCase());
+		}
+
+		return Map.of("res", true);
 	}
 
 }

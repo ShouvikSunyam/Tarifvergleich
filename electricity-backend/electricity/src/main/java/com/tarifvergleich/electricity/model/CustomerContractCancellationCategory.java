@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,7 +37,7 @@ public class CustomerContractCancellationCategory {
 	
 	private Integer status;
 	
-	@OneToMany(mappedBy = "selectedCategory")
+	@OneToMany(mappedBy = "selectedCategory", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties("selectedCategory")
 	private List<CustomerContractCancellationRequest> cancellationRequests;
 

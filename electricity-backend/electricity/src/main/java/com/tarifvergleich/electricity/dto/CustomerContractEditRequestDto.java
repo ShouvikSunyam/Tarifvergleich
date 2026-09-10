@@ -26,7 +26,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CustomerContractEditRequestDto {
 
-	private Integer id;
+	private Integer customerContractEditId;
 
 	private List<Integer> selectedOption;
 

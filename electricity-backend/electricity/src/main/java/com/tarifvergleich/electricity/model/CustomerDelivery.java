@@ -142,6 +142,10 @@ public class CustomerDelivery {
 
 	@OneToMany(mappedBy = "customerDelivery")
 	@JsonIgnoreProperties("customerDelivery")
+	private List<CustomerContractCancellationRequest> customerContractCancellationRequests;
+
+	@OneToMany(mappedBy = "customerDelivery")
+	@JsonIgnoreProperties("customerDelivery")
 	private List<EnergySupplierMessage> energySupplierMessages;
 
 	@ManyToOne(fetch = FetchType.LAZY)

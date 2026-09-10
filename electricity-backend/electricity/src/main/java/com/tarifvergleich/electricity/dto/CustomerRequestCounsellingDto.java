@@ -50,6 +50,7 @@ public class CustomerRequestCounsellingDto {
         private CustomerShortDetail customer;  
         private Boolean concluded;
         private Integer deliveryId;
+        private Boolean isCancellationRequest;
     }
     
     public static CustomerRequestCousellingResponseForAdmin mapCustomerRequestCounsellingResponseForAdmin(CustomerRequestCounselling request) {
@@ -86,6 +87,7 @@ public class CustomerRequestCounsellingDto {
     			.scheduleDate(request.getScheduleDate())
     			.createdOn(request.getCreatedOn())
     			.concluded(request.getConcluded())
+    			.isCancellationRequest(request.getContractCancellationRequest() != null ? true : false)
     			.customer(request.getCustomer() != null ? CustomerDto.customerShortResponse(request.getCustomer()) : null)
     			.deliveryId(deliveryId)
     			.build();

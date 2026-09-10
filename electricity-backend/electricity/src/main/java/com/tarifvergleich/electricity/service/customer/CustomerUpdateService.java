@@ -261,10 +261,17 @@ public class CustomerUpdateService {
 		CustomerContractCancellationCategory category = cancellationCategoryRepository
 				.findById(requestDto.getSelectedCategoryId())
 				.orElseThrow(() -> new InternalServerException("Invalid Category", HttpStatus.OK));
+		
 
 		CustomerRequestCounselling counsellingSchedule = CustomerRequestCounselling.builder()
 				.mobileNumber(requestDto.getMobileNumber()).weekDay(requestDto.getWeekDay().toUpperCase())
+				.scheduleDate(requestDto.getWeekDay() != null
+				? BigInteger.valueOf(LocalDate.parse(requestDto.getWeekDay())
+						.atStartOfDay(ZoneId.of("Europe/Berlin")).toEpochSecond())
+				: null)
 				.customerOrder(delivery.getCustomerOrder())
+				.admin(delivery.getAdmin())
+				.customer(delivery.getCustomerId())
 				.timeSlot(requestDto.getTimeSlot()).description(requestDto.getDescription()).build();
 
 		CustomerContractCancellationRequest request = CustomerContractCancellationRequest.builder()

@@ -29,16 +29,13 @@ import com.tarifvergleich.electricity.model.TokenManagement;
 import com.tarifvergleich.electricity.repository.AdminEmailManagementRepository;
 import com.tarifvergleich.electricity.repository.AdminUserRepository;
 import com.tarifvergleich.electricity.repository.CustomerAddressRepository;
-import com.tarifvergleich.electricity.repository.CustomerAttornyRepository;
 import com.tarifvergleich.electricity.repository.CustomerRepository;
 import com.tarifvergleich.electricity.repository.TokenManagementRepository;
 import com.tarifvergleich.electricity.service.AesEncryptionService;
 import com.tarifvergleich.electricity.service.MailService;
-import com.tarifvergleich.electricity.util.CustomEmailTemplate;
 import com.tarifvergleich.electricity.util.EmailBodyRender;
 import com.tarifvergleich.electricity.util.EmailTemplate;
 import com.tarifvergleich.electricity.util.Helper;
-import com.tarifvergleich.electricity.util.PdfGenerator;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;

@@ -14,5 +14,5 @@ public interface CustomerContractEditRequestRepository extends JpaRepository<Cus
 	
 	Page<CustomerContractEditRequest> findAllByAdminAdminIdOrderByCreatedOnDesc(Integer adminId, Pageable pageable);
 	List<CustomerContractEditRequest> findAllByAdminAdminIdOrderByCreatedOnDesc(Integer adminId);
-	
+		
 }
