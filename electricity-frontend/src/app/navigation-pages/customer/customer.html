@@ -1230,7 +1230,7 @@
 
                 <button class="meter-orange-btn">Umzug melden</button>
 
-                <button class="meter-orange-btn">Kündigungsservice</button>
+                <button class="meter-orange-btn" (click)="cancellationService(item)">Kündigungsservice</button>
               </div>
             </div>
             <!-- BUTTONS -->
@@ -2508,7 +2508,7 @@
 
       <br />
 
-      <div class="selected-contract-wrapper">
+      <div class="selected-contract-wrapper" *ngIf="!contractChangeSuccess">
 
         <!-- HEADER -->
         <div class="selected-contract-header">
@@ -2725,7 +2725,8 @@
                   Heiratsurkunde oder Scheidungsurkunde hochladen
                 </div>
 
-                <input type="file" (change)="onContractDocumentUpload($event, 'lastName')" />
+                <input type="file" accept="image/*,application/pdf"
+                  (change)="onContractDocumentUpload($event, 'lastName')" />
 
                 <div class="field-error-msg" *ngIf="fieldErrors['lastNameDocument']">
                   {{ fieldErrors['lastNameDocument'] }}
@@ -2775,7 +2776,8 @@
                   Gewerbeummeldung oder Handelsregisterauszug hochladen
                 </div>
 
-                <input type="file" (change)="onContractDocumentUpload($event, 'companyName')" />
+                <input type="file" accept="image/*,application/pdf"
+                  (change)="onContractDocumentUpload($event, 'companyName')" />
 
                 <div class="field-error-msg" *ngIf="fieldErrors['companyNameDocument']">
                   {{ fieldErrors['companyNameDocument'] }}
@@ -2821,7 +2823,8 @@
                   Titelnachweis hochladen
                 </div>
 
-                <input type="file" (change)="onContractDocumentUpload($event, 'title')" />
+                <input type="file" accept="image/*,application/pdf"
+                  (change)="onContractDocumentUpload($event, 'title')" />
 
                 <div class="field-error-msg" *ngIf="fieldErrors['titleDocument']">
                   {{ fieldErrors['titleDocument'] }}
@@ -2900,7 +2903,8 @@
                   Kopie des Personalausweises hochladen
                 </div>
 
-                <input type="file" (change)="onContractDocumentUpload($event, 'personData')" />
+                <input type="file" accept="image/*,application/pdf"
+                  (change)="onContractDocumentUpload($event, 'personData')" />
 
                 <div class="field-error-msg" *ngIf="fieldErrors['personDataDocument']">
                   {{ fieldErrors['personDataDocument'] }}
@@ -2944,7 +2948,8 @@
                   Kopie des Personalausweises hochladen
                 </div>
 
-                <input type="file" (change)="onContractDocumentUpload($event, 'dateOfBirth')" />
+                <input type="file" accept="image/*,application/pdf"
+                  (change)="onContractDocumentUpload($event, 'dateOfBirth')" />
 
                 <div class="field-error-msg" *ngIf="fieldErrors['dateOfBirthDocument']">
                   {{ fieldErrors['dateOfBirthDocument'] }}
@@ -3268,7 +3273,7 @@
       </div>
 
       <!-- SUCCESS -->
-      <!-- <div class="success-box" style="width: auto" *ngIf="submittedEnergyMessage">
+      <div class="success-box" style="width: auto" *ngIf="contractChangeSuccess">
         <div class="success-content">
           <div class="success-row">
             <img src="assets/icons/Kreis_Haken_gruen.png" alt="success" />
@@ -3279,18 +3284,16 @@
               </div>
 
               <div class="tab-text">
-                Ihre Nachricht wurde erfolgreich an den
-                Energieversorger übermittelt.
+                Ihre Nachricht wurde erfolgreich übermittelt.
               </div>
 
               <div class="tab-text">
-                Der Anbieter wird Ihre Anfrage prüfen und sich
-                schnellstmöglich bei Ihnen melden.
+                {{ contractChangeSuccessMessage }}
               </div>
             </div>
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
 
 
@@ -3496,7 +3499,279 @@
       </div>
     </div>
 
+    <!--══════════ Cancellation Service ══════════-->
+    <div *ngIf="activeTab === 1 && currentStep === 9">
 
+      <div class="login-berich">Kündigungsservice</div>
+      <br />
+
+      <div class="selected-contract-wrapper" *ngIf="!submittedCallback">
+        <div class="selected-contract-header">Ausgewählter Vertrag</div>
+
+        <div class="selected-contract-card">
+          <div class="contract-top">
+            <div class="contract-left">
+              <img [src]="selectedMeter.meterIcon" alt="provider" class="provider-logo" />
+
+              <div class="provider-name">
+                {{ selectedMeter.tariff }}
+              </div>
+
+              <div class="meter-provider-badge">
+                <img [src]="selectedMeter.providerIcon" alt="" class="badge-icon" />
+
+                <span>
+                  {{ selectedMeter.providerType }}
+                </span>
+              </div>
+            </div>
+
+            <div class="contract-center">
+              <div class="contract-row-title">
+                <strong>Zählerbezeichnung:</strong>
+
+                <a class="change-link" *ngIf="!isEditingSelectedMeterName" (click)="editSelectedMeterName()">
+                  ändern
+                  <img src="assets/icons/Bearbeiten_schwarz.png" alt="edit" />
+                </a>
+              </div>
+
+              <div class="meter-id" *ngIf="!isEditingSelectedMeterName">
+                {{ selectedMeter?.meterDesignation }}
+              </div>
+
+              <div class="meter-edit-box" *ngIf="isEditingSelectedMeterName">
+                <input type="text" [(ngModel)]="selectedMeter.meterDesignation" class="meter-input"
+                  placeholder="Zählerbezeichnung" />
+
+                <button type="button" class="icon-action save-icon" (click)="saveSelectedMeterName()">
+                  ✓
+                </button>
+
+                <button type="button" class="icon-action cancel-icon" (click)="cancelSelectedMeterEdit()">
+                  ✕
+                </button>
+              </div>
+              <div class="address-wrap">
+                <p>
+                  <strong>Adresse:</strong>
+                  {{ selectedMeter.address.name }}
+                </p>
+
+                <p>
+                  {{ selectedMeter.address.street }}
+                </p>
+
+                <p>
+                  {{ selectedMeter.address.city }}
+                </p>
+              </div>
+            </div>
+
+            <div class="contract-right">
+              <p>
+                Vertragsnummer:
+                <strong>
+                  {{ selectedMeter.contractNumber }}
+                </strong>
+              </p>
+
+              <p>
+                Kundennummer:
+                <strong>
+                  {{ selectedMeter.customerNumber }}
+                </strong>
+              </p>
+
+              <br />
+
+              <p>
+                Zählernummer:
+                <strong>
+                  {{ selectedMeter.meterNumber }}
+                </strong>
+              </p>
+
+              <p>
+                Marktlokation-ID:
+                <strong>
+                  {{ selectedMeter.marketLocation }}
+                </strong>
+              </p>
+            </div>
+          </div>
+
+          <!-- CANCELLATION FORM -->
+          <div class="meter-reading-section">
+            <h4>Vertrag kündigen</h4>
+            <p class="meter-subtext">
+              Bitte teilen Sie uns die Details zu Ihrer Kündigung mit.
+            </p>
+
+            <!-- CATEGORY -->
+            <span class="field-label">Kündigungsgrund auswählen *</span>
+            <div class="input-field select-wrap" style="display: block;">
+              <div>
+                <select class="styled-select" [(ngModel)]="cancellationData.categoryId">
+                  <option value="">Bitte wählen...</option>
+                  <option *ngFor="let category of cancellationCategories" [value]="category.id">
+                    {{ category.categoryName }}
+                  </option>
+                </select>
+                <span class="material-symbols-outlined dropdown-arrow">expand_more</span>
+              </div>
+            </div>
+            <div class="field-error-msg" *ngIf="fieldErrors['categoryId']">
+              {{ fieldErrors['categoryId'] }}
+            </div>
+
+            <!-- FREE TEXT REASON -->
+            <span class="field-label" style="display: block; margin-top: 20px;">
+              Bitte beschreiben Sie den genauen Grund
+            </span>
+            <textarea class="information-box" rows="3"
+              placeholder="z. B. Details zu Ihrem Umzug oder dem neuen Angebot"></textarea>
+
+            <!-- EFFECTIVE DATE -->
+            <span class="field-label" style="display: block; margin-top: 20px;">
+              Gewünschtes Kündigungsdatum *
+            </span>
+            <div class="form-row">
+              <div class="form-group" style="flex: 0 0 220px">
+                <div class="field-wrap" (click)="openDatePicker(cancellationDateInput)">
+                  <input type="date" #cancellationDateInput style="cursor: pointer;" />
+                </div>
+              </div>
+            </div>
+            <div class="field-error-msg" *ngIf="fieldErrors['effectiveDate']">
+              {{ fieldErrors['effectiveDate'] }}
+            </div>
+
+            <!-- TERMINATION TYPE -->
+            <span class="field-label" style="display: block; margin-top: 20px;">
+              Art der Kündigung *
+            </span>
+            <div class="input-field select-wrap" style="display: block;">
+              <div>
+                <select class="styled-select" name="terminationType" [(ngModel)]="cancellationData.terminationType"
+                  (ngModelChange)="onTerminationTypeChange($event)">
+                  <option value="">Bitte wählen...</option>
+                  <option value="ordinary">Ordentliche Kündigung</option>
+                  <option value="extraordinary">Außerordentliche Kündigung</option>
+                </select>
+                <span class="material-symbols-outlined dropdown-arrow">expand_more</span>
+              </div>
+            </div>
+
+            <p class="meter-subtext" style="font-size: 12px; margin-top: 6px;" *ngIf="cancellationData.terminationType">
+              {{ cancellationData.terminationType === 'ordinary'
+              ? 'Der Vertrag endet regulär nach Ablauf der Vertragslaufzeit.'
+              : 'Möglich z. B. bei einer Preisänderung durch den Anbieter während der Laufzeit.' }}
+            </p>
+
+            <div class="field-error-msg" *ngIf="fieldErrors['terminationType']">
+              {{ fieldErrors['terminationType'] }}
+            </div>
+
+
+            <!-- ADDITIONAL INFO -->
+            <span class="field-label" style="display: block; margin-top: 20px;">
+              Möchten Sie uns noch etwas mitteilen?
+            </span>
+            <textarea class="information-box" rows="4" placeholder="Platz für weitere Informationen zu Ihrer Kündigung"
+              [(ngModel)]="cancellationData.additionalInfo"></textarea>
+
+            <h4 style="margin-top: 24px;">Rückruf von Berater anfordern</h4>
+
+            <p class="meter-subtext">Bitte tragen Sie hier die Details Ihres Rückrufs ein.</p>
+
+            <!-- Phone Number -->
+            <div class="container-wish">
+              <span class="telefon">Bitte geben Sie Ihre Telefonnummer an, <br />
+                unter der wir Sie erreichen können.
+              </span>
+            </div>
+            <div class="container-phone">
+              <input class="country-code" type="text" [(ngModel)]="countryCode" readonly />
+              <input type="number" placeholder="Mobilnummer oder Festnetznummer" [(ngModel)]="phoneNumber"
+                class="number" />
+            </div>
+
+            <div class="field-error-msg" *ngIf="fieldErrors['phoneNumber']">
+              {{ fieldErrors['phoneNumber'] }}
+            </div>
+
+            <!-- Day Selection -->
+            <span class="field-label"> Bitte wählen Sie den Wochentag </span>
+            <div class="container-days">
+              <button type="button" class="days" *ngFor="let day of filteredDays; trackBy: trackByDay"
+                (click)="selectDay(day)" [class.active]="selectedDay?.date === day.date">
+                {{ getDayLabel(day.date) }}
+                ({{ day.label }})
+              </button>
+            </div>
+
+            <!-- Time Selection -->
+            <span class="field-label"> Bitte wählen Sie die Uhrzeit </span>
+            <div class="container-days">
+              <button type="button" class="days" *ngFor="let slot of timeSlots" (click)="selectTimeSlot(slot.value)"
+                [class.active]="selectedTimeSlot === slot.value" [disabled]="!isTimeSlotEnabled(slot.value)"
+                [class.disabled]="!isTimeSlotEnabled(slot.value)">
+                {{ slot.label }}
+              </button>
+            </div>
+
+            <!-- Additional Information -->
+            <span class="field-label"> Weitere Informationen </span>
+            <textarea class="information-box" rows="4"
+              placeholder="Platz für Infos, z.B. genaue Uhrzeit, an der Sie gut erreichbar sind"
+              [(ngModel)]="scheduleDescription"></textarea>
+
+            <!-- Success/Error -->
+            <div class="api-message success" *ngIf="scheduleSuccessMessage">
+              {{ scheduleSuccessMessage }}
+            </div>
+
+            <div class="field-error-msg" *ngIf="scheduleErrorMessage">
+              {{ scheduleErrorMessage }}
+            </div>
+
+            <!-- Single Submit Button -->
+            <div class="meter-btn-row">
+              <button type="button" class="btn-primary">
+                <span>
+                  <span class="spinner"></span>
+                  Einreichen...
+                </span>
+
+                <ng-template #normal>
+                  <span>Anfrage senden</span>
+                </ng-template>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="success-box" style="width: auto" *ngIf="submittedCallback">
+        <div class="success-content">
+          <div class="success-row">
+            <img src="assets/icons/Kreis_Haken_gruen.png" alt="success" />
+
+            <div class="text-block">
+              <div class="tab-header">Rückruf erfolgreich angefragt!</div>
+
+              <div class="tab-text">
+                Ihre Rückrufanfrage wurde erfolgreich übermittelt. Unser Berater wird Sie zum
+                gewünschten Zeitpunkt kontaktieren.
+              </div>
+
+              <div class="tab-text">Vielen Dank für Ihre Anfrage.</div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
     <!--══════════ Meters Section End ══════════-->
 
     <!--══════════ Reminder Section Start (Tab - 2) ══════════-->
