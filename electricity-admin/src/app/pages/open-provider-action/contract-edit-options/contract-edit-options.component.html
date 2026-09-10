@@ -1,0 +1,987 @@
+<div class="relative">
+
+    <!-- Loading -->
+    @if (isLoading) {
+    <div class="flex items-center gap-2 text-gray-500 text-sm mb-4">
+        <div
+            class="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-500">
+        </div>
+
+        <span>
+            Contract Edit Options werden geladen...
+        </span>
+    </div>
+    }
+
+
+    <!-- Main container -->
+    <div
+        class="relative flex overflow-hidden rounded-2xl bg-white dark:bg-gray-900 shadow">
+
+        <!-- TABLE -->
+        <div class="flex-1 min-w-0 p-6">
+
+            <h2
+                class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+
+                Optionen zur Vertragsbearbeitung
+
+            </h2>
+
+
+            <!-- Search -->
+            <div class="flex items-center gap-2 mb-6">
+
+                <div class="flex-1">
+
+                    <input
+                        type="text"
+                        [(ngModel)]="searchTerm"
+                        (ngModelChange)="onSearchInput($event)"
+                        placeholder="Suche nach Name..."
+                        class="w-full px-3 py-2 rounded-lg border border-gray-300
+                               dark:border-gray-600 dark:bg-gray-800
+                               dark:text-white focus:outline-none" />
+
+                </div>
+
+
+                @if (searchTerm) {
+
+                <button
+                    type="button"
+                    (click)="clearSearch()"
+                    class="px-3 py-2 rounded-lg border border-gray-300
+                           dark:border-gray-600 text-sm
+                           hover:bg-gray-50 dark:hover:bg-gray-700">
+
+                    Löschen
+
+                </button>
+
+                }
+
+            </div>
+
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+
+                <table
+                    class="w-full text-sm text-left border-collapse">
+
+                    <thead
+                        class="text-xs uppercase bg-gray-100
+                               dark:bg-gray-800 text-gray-600
+                               dark:text-gray-300">
+
+                        <tr>
+
+                            <th class="px-4 py-3 rounded-tl-lg">
+                                ID
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Name
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Änderung
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Neuer Wert
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Type
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Unterlagen
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Erstellt am
+                            </th>
+
+                            <th class="px-4 py-3">
+                                Status
+                            </th>
+
+                            <th class="px-4 py-3 rounded-tr-lg text-right">
+                                Aktion
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        class="divide-y dark:divide-gray-700">
+
+                        @for (
+                            request of contractEditOptions;
+                            track trackById($index, request);
+                            let i = $index
+                        ) {
+
+                        <tr
+                            class="hover:bg-gray-50 dark:hover:bg-gray-800
+                                   transition cursor-pointer">
+
+                            <!-- ID -->
+                            <td class="px-4 py-4">
+                                {{ i + 1 }}
+                            </td>
+
+
+                            <!-- NAME -->
+                            <td class="px-4 py-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="w-8 h-8 rounded-full
+                                               bg-brand-100 text-brand-600
+                                               flex items-center justify-center
+                                               text-xs font-semibold">
+
+                                        {{ customerInitial(request) }}
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <p
+                                            class="font-medium text-gray-900
+                                                   dark:text-white">
+
+                                            {{ getCustomerName(request) }}
+
+                                        </p>
+
+
+                                        @if (request.customer?.email) {
+
+                                        <p class="text-xs text-gray-500">
+                                            {{ request.customer?.email }}
+                                        </p>
+
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- ÄNDERUNG -->
+                            <td class="px-4 py-4">
+
+                                <span
+                                    class="inline-flex items-center px-2.5 py-1
+                                        rounded-md bg-gray-100 dark:bg-gray-800
+                                        text-xs font-medium
+                                        text-gray-700 dark:text-gray-300">
+
+                                    {{ getOptionName(request) }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- NEUER WERT -->
+                            <td class="px-4 py-4">
+
+                                <span
+                                    class="font-medium text-gray-900
+                                        dark:text-white">
+
+                                    {{ getChangedValue(request) }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- TYPE -->
+                            <td class="px-4 py-4">
+
+                                @if (request.energyBranch?.toUpperCase() === "ELECTRICITY") {
+
+                                    <span
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium
+                                            bg-yellow-100 text-yellow-800
+                                            dark:bg-yellow-900/30 dark:text-yellow-400">
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-3.5 w-3.5"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor">
+
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                                                clip-rule="evenodd" />
+
+                                        </svg>
+
+                                        Strom
+
+                                    </span>
+
+                                }
+                                @else if (request.energyBranch?.toUpperCase() === "GAS") {
+
+                                    <span
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium
+                                            bg-orange-100 text-orange-800
+                                            dark:bg-orange-900/30 dark:text-orange-400">
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-3.5 w-3.5"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor">
+
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5 1.25-4 1.25-4.5c1 .5 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
+                                                clip-rule="evenodd" />
+
+                                        </svg>
+
+                                        Gas
+
+                                    </span>
+
+                                }
+                                @else {
+
+                                    <span class="text-gray-400">
+                                        {{ getBranchLabel(request.energyBranch) }}
+                                    </span>
+
+                                }
+
+                            </td>
+
+
+                            <!-- DOCUMENTS -->
+                            <td class="px-4 py-4">
+
+                                <div class="flex items-center gap-2">
+
+                                    <button
+                                        type="button"
+                                        (click)="openDocuments(request, $event)"
+                                        class="inline-flex items-center justify-center
+                                               w-9 h-9 rounded-lg
+                                               bg-brand-50 text-brand-600
+                                               hover:bg-brand-100
+                                               dark:bg-brand-900/20
+                                               dark:text-brand-400
+                                               dark:hover:bg-brand-900/40
+                                               border border-brand-200
+                                               dark:border-brand-700/40
+                                               transition cursor-pointer"
+                                        title="Dokumente anzeigen">
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-4 w-4"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor">
+
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M2.458 12C3.732 7.943
+                                                   7.523 5 12 5c4.478 0
+                                                   8.268 2.943 9.542 7
+                                                   -1.274 4.057-5.064
+                                                   7-9.542 7-4.477
+                                                   0-8.268-2.943-9.542-7z" />
+
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0
+                                                   3 3 0 016 0z" />
+
+                                        </svg>
+
+                                    </button>
+
+
+                                    <span class="text-xs text-gray-500">
+                                        {{ getDocumentCount(request) }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- STATUS -->
+                            <td class="px-4 py-4">
+
+                                <span
+                                    class="px-2.5 py-1 rounded-full text-xs font-medium"
+                                    [ngClass]="
+                                        request.status === 1
+                                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                            : request.status === 2
+                                                ? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                                                : 'bg-gray-100 text-gray-500'
+                                    ">
+
+                                    {{ getStatusLabel(request.status) }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- ERSTELLT AM -->
+                            <td class="px-4 py-4 whitespace-nowrap">
+                                {{ formatDate(request.createdOn) }}
+                            </td>
+
+
+                            <!-- AKTION -->
+                            <td class="px-4 py-4 text-right">
+
+                                <button
+                                    type="button"
+                                    (click)="openSidebar(request, i)"
+                                    class="inline-flex items-center gap-1
+                                           px-2.5 py-1 text-xs font-medium
+                                           rounded-lg
+                                           bg-brand-50 text-brand-600
+                                           hover:bg-brand-100
+                                           dark:bg-brand-900/20
+                                           dark:text-brand-400
+                                           dark:hover:bg-brand-900/40
+                                           transition cursor-pointer
+                                           border border-brand-200
+                                           dark:border-brand-700/40">
+
+                                    Einzelheiten
+
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-3.5 w-3.5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor">
+
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 5l7 7-7 7" />
+
+                                    </svg>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Empty -->
+            @if (
+                !isLoading &&
+                !errorMessage &&
+                contractEditOptions.length === 0
+            ) {
+
+            <div class="text-center py-12 text-gray-400 text-sm">
+                Keine Contract Edit Options gefunden.
+            </div>
+
+            }
+
+        </div>
+
+
+        <!-- RIGHT SIDEBAR -->
+        @if (isSidebarOpen && selectedRequest) {
+
+        <aside
+            class="w-80 shrink-0
+                   border-l border-gray-200
+                   dark:border-gray-700
+                   bg-white dark:bg-gray-900
+                   flex flex-col overflow-hidden">
+
+            <!-- Sidebar Header -->
+            <div
+                class="flex items-center justify-between px-5 py-4
+                       border-b border-gray-200 dark:border-gray-700">
+
+                <span class="text-sm font-semibold">
+                    Optionen zur Vertragsbearbeitung
+                </span>
+
+                <button
+                    type="button"
+                    (click)="closeSidebar()"
+                    class="text-gray-500 hover:text-gray-800
+                           dark:hover:text-white">
+
+                    ✕
+
+                </button>
+
+            </div>
+
+
+            <!-- Sidebar Content -->
+            <div class="p-5">
+
+                <!-- Customer -->
+                <div class="flex items-center gap-3 mb-4">
+
+                    <div
+                        class="h-10 w-10 rounded-full
+                               bg-violet-100
+                               flex items-center justify-center
+                               text-sm font-semibold
+                               text-violet-700">
+
+                        {{ customerInitial(selectedRequest) }}
+
+                    </div>
+
+                    <div>
+
+                        <p
+                            class="font-semibold text-gray-900
+                                   dark:text-white">
+
+                            {{ getCustomerName(selectedRequest) }}
+
+                        </p>
+
+                        @if (selectedRequest.customer?.email) {
+
+                        <p class="text-xs text-gray-500">
+                            {{ selectedRequest.customer?.email }}
+                        </p>
+
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <!-- DETAILS BLOCK -->
+                <div
+                    class="rounded-xl bg-gray-50
+                           dark:bg-gray-800 p-4">
+
+                    <h3 class="font-semibold text-sm mb-3">
+                        Details
+                    </h3>
+
+                    <div class="space-y-3 text-sm">
+
+                        <!-- ID -->
+                        <div class="flex justify-between gap-4">
+                            <span>ID</span>
+
+                            <span class="text-right">
+                                {{ selectedIndex !== null ? selectedIndex + 1 : "—" }}
+                            </span>
+                        </div>
+
+
+                        <!-- Änderung -->
+                        <div class="flex justify-between gap-4">
+                            <span>Änderung</span>
+
+                            <span class="text-right break-words">
+                                {{ getOptionName(selectedRequest) }}
+                            </span>
+                        </div>
+
+
+                        <!-- Neuer Wert -->
+                        <div class="flex justify-between gap-4">
+                            <span>Neuer Wert</span>
+
+                            <span
+                                class="text-right break-words font-medium">
+
+                                {{ getChangedValue(selectedRequest) }}
+
+                            </span>
+                        </div>
+
+                        <!-- Type -->
+                        <div
+                            class="flex justify-between gap-4
+                                   items-center">
+
+                            <span>Type</span>
+
+                            @if (selectedRequest.energyBranch?.toUpperCase() === "ELECTRICITY") {
+
+                            <span
+                                class="inline-flex items-center gap-1.5
+                                       px-2.5 py-1 rounded-md
+                                       text-xs font-medium
+                                       bg-yellow-100 text-yellow-800
+                                       dark:bg-yellow-900/30
+                                       dark:text-yellow-400
+                                       whitespace-nowrap">
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-3.5 w-3.5"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor">
+
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                                        clip-rule="evenodd" />
+
+                                </svg>
+
+                                Strom
+
+                            </span>
+
+                            }
+                            @else if (selectedRequest.energyBranch?.toUpperCase() === "GAS") {
+
+                            <span
+                                class="inline-flex items-center gap-1.5
+                                       px-2.5 py-1 rounded-md
+                                       text-xs font-medium
+                                       bg-orange-100 text-orange-800
+                                       dark:bg-orange-900/30
+                                       dark:text-orange-400
+                                       whitespace-nowrap">
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-3.5 w-3.5"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor">
+
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
+                                        clip-rule="evenodd" />
+
+                                </svg>
+
+                                Gas
+
+                            </span>
+
+                            }
+                            @else {
+
+                            <span class="text-gray-400">
+                                —
+                            </span>
+
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STATUS & ACTION BLOCK -->
+                <div
+                    class="rounded-xl bg-gray-50
+                           dark:bg-gray-800 p-4 mt-4">
+
+                    <h3 class="font-semibold text-sm mb-3">
+                        Status & Aktion
+                    </h3>
+
+                    <div class="space-y-3 text-sm">
+
+                        <!-- Status -->
+                        <div
+                            class="flex justify-between gap-4
+                                   items-center">
+
+                            <span>Status</span>
+
+                            <span
+                                class="px-2.5 py-1 rounded-full
+                                       text-xs font-medium"
+                                [ngClass]="
+                                    selectedRequest.status === 1
+                                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                        : selectedRequest.status === 2
+                                            ? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                                            : 'bg-gray-100 text-gray-500'
+                                ">
+
+                                {{ getStatusLabel(selectedRequest.status) }}
+
+                            </span>
+
+                        </div>
+
+                        <!-- Erstellt am -->
+                        <div class="flex justify-between gap-4">
+                            <span>Erstellt am</span>
+
+                            <span class="text-right">
+                                {{ formatDate(selectedRequest.createdOn) }}
+                            </span>
+                        </div>
+
+                        <!-- Unterlagen -->
+                        <div class="flex justify-between gap-4">
+
+                            <span>Unterlagen</span>
+
+                            <span class="text-right">
+                                {{ getDocumentCount(selectedRequest) }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Send to Provider -->
+                    <div class="mt-4">
+
+                        <button
+                            type="button"
+                            class="w-full flex items-center
+                                   justify-center gap-2
+                                   px-4 py-2.5 rounded-lg
+                                   bg-brand-500
+                                   hover:bg-brand-600
+                                   text-white text-xs
+                                   font-semibold transition">
+
+                            An Anbieter senden
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+        }
+
+    </div>
+
+
+    <!-- DOCUMENTS POPUP -->
+    @if (isDocumentsOpen) {
+
+        <!-- Overlay -->
+        <div
+            class="fixed inset-0 z-40 bg-black/40"
+            (click)="closeDocuments($event)">
+        </div>
+
+
+        <!-- Modal -->
+        <div
+            class="fixed z-50 top-1/2 left-1/2
+                -translate-x-1/2 -translate-y-1/2
+                w-[520px] max-w-[90vw]
+                max-h-[80vh]
+                rounded-2xl
+                bg-white dark:bg-gray-900
+                shadow-2xl
+                border border-gray-200
+                dark:border-gray-700
+                flex flex-col">
+
+            <!-- Header -->
+            <div
+                class="flex items-center justify-between
+                    px-6 py-4
+                    border-b border-gray-200
+                    dark:border-gray-700">
+
+                <div>
+
+                    <h3
+                        class="font-semibold text-base
+                            text-gray-900 dark:text-white">
+
+                        Unterlagen
+
+                    </h3>
+
+                    @if (selectedRequest) {
+
+                        <p
+                            class="text-xs text-gray-400 mt-1">
+
+                            {{ getCustomerName(selectedRequest) }}
+
+                        </p>
+
+                    }
+
+                </div>
+
+
+                <!-- Close X -->
+                <button
+                    type="button"
+                    (click)="closeDocuments($event)"
+                    class="w-8 h-8
+                        flex items-center justify-center
+                        rounded-lg
+                        text-gray-400
+                        hover:text-gray-700
+                        hover:bg-gray-100
+                        dark:hover:bg-gray-800
+                        dark:hover:text-white
+                        transition">
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+
+                    </svg>
+
+                </button>
+
+            </div>
+
+
+            <!-- Documents -->
+            <div
+                class="flex-1 overflow-y-auto
+                    px-6 py-5">
+
+                @if (selectedDocuments.length > 0) {
+
+                    <div class="space-y-3">
+
+                        @for (
+                            document of selectedDocuments;
+                            track document.filePath ?? $index
+                        ) {
+
+                            <button
+                                type="button"
+                                (click)="openDocument(document)"
+                                class="w-full flex items-center gap-4
+                                    p-4
+                                    rounded-xl
+                                    border border-gray-200
+                                    dark:border-gray-700
+                                    bg-white dark:bg-gray-800
+                                    hover:bg-gray-50
+                                    dark:hover:bg-gray-750
+                                    hover:border-brand-300
+                                    dark:hover:border-brand-600
+                                    transition
+                                    text-left">
+
+                                <!-- Document Icon -->
+                                <div
+                                    class="w-11 h-11 shrink-0
+                                        rounded-lg
+                                        bg-brand-50
+                                        dark:bg-brand-900/20
+                                        flex items-center justify-center">
+
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5 text-brand-500"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor">
+
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="1.8"
+                                            d="M7 3h7l5 5v13H7a2 2
+                                            0 01-2-2V5a2 2
+                                            0 012-2z" />
+
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="1.8"
+                                            d="M14 3v6h6" />
+
+                                    </svg>
+
+                                </div>
+
+
+                                <!-- Document Information -->
+                                <div class="min-w-0 flex-1">
+
+                                    <p
+                                        class="text-sm font-medium
+                                            text-gray-800
+                                            dark:text-white
+                                            truncate">
+
+                                        {{ document.name }}
+
+                                    </p>
+
+                                    <p
+                                        class="text-xs text-gray-400 mt-1">
+
+                                        Dokument anzeigen
+
+                                    </p>
+
+                                </div>
+
+
+                                <!-- Arrow -->
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-4 w-4 shrink-0
+                                        text-gray-400"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor">
+
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+
+                                </svg>
+
+                            </button>
+
+                        }
+
+                    </div>
+
+                }
+
+                @else {
+
+                    <div
+                        class="py-12
+                            text-center
+                            text-sm text-gray-400">
+
+                        Keine Dokumente vorhanden.
+
+                    </div>
+
+                }
+
+            </div>
+
+
+            <!-- Footer -->
+            <div
+                class="flex items-center justify-end
+                    px-6 py-4
+                    border-t border-gray-200
+                    dark:border-gray-700
+                    bg-gray-50
+                    dark:bg-gray-900/50
+                    rounded-b-2xl">
+
+                <button
+                    type="button"
+                    (click)="closeDocuments($event)"
+                    class="px-4 py-2
+                        rounded-lg
+                        border border-gray-300
+                        dark:border-gray-600
+                        text-sm font-medium
+                        text-gray-700
+                        dark:text-gray-200
+                        hover:bg-white
+                        dark:hover:bg-gray-800
+                        transition">
+
+                    Schließen
+
+                </button>
+
+            </div>
+
+        </div>
+
+    }
+
+
+    <!-- Error -->
+    @if (!isLoading && errorMessage) {
+
+    <div class="text-center py-12">
+
+        <p class="text-red-500 text-sm mb-3">
+            {{ errorMessage }}
+        </p>
+
+
+        <button
+            type="button"
+            (click)="fetchContractEditOptions()"
+            class="px-4 py-2 text-sm
+                   bg-brand-500 text-white
+                   rounded-lg hover:bg-brand-600
+                   transition cursor-pointer">
+
+            Erneut versuchen
+
+        </button>
+
+    </div>
+
+    }
+
+</div>
