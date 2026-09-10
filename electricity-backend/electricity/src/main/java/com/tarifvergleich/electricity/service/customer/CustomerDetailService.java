@@ -258,7 +258,7 @@ public class CustomerDetailService {
 		List<CustomerInvoiceRequest> allInvoices = invoiceRepo.findByDeliveryIdIn(deliveryIds);
 
 		// STEP 3B: fetch meter readings
-		List<ReportMeterReading> allMeterReadings = reportMeterReadingRepo.findByDeliveryIdIn(deliveryIds);
+		List<ReportMeterReading> allMeterReadings = reportMeterReadingRepo.findByDeliveryIdIdIn(deliveryIds);
 
 		// STEP 3D: fetch discount requests
 		List<CustomerChangeDiscountRequest> allDiscountRequests = customerChangeDiscountRequestRepository

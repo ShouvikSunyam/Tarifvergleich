@@ -63,7 +63,7 @@ public class CustomerContractEditRequest {
 	@JsonIgnore
 	private AdminUser admin;
 	
-	@Column(name = "request_status", comment = "1 - request created")
+	@Column(name = "request_status", comment = "1 - request created, 2 - resolved")
 	private Integer requestStatus;
 	
 	@Column(name = "created_on")

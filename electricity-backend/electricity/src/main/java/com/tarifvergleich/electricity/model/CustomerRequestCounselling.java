@@ -2,10 +2,12 @@ package com.tarifvergleich.electricity.model;
 
 import java.math.BigInteger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tarifvergleich.electricity.util.Helper;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -61,6 +63,11 @@ public class CustomerRequestCounselling {
 	@ManyToOne
 	@JoinColumn(name = "customer_order_id")
 	private CustomerOrder customerOrder;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "contract_cancellation_request_id")
+	private CustomerContractCancellationRequest contractCancellationRequest;
 
 	@Column(name = "created_on")
 	private BigInteger createdOn;

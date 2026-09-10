@@ -243,6 +243,11 @@ public class CustomerController {
 			@RequestBody com.tarifvergleich.electricity.dto.CancellationServiceCategoryDto dto) {
 		return ResponseEntity.ok(customerCategoryService.fetchCancellationServiceCategoriesForCustomer(dto));
 	}
+	
+	@PostMapping("/fetch-contract-cancellation-category")
+	public ResponseEntity<?> fetchCustomerCancellationCategory(){
+		return ResponseEntity.ok(customerCategoryService.fetchContractCancellationCategory());
+	}
 
 	@PostMapping("/edit-contract-details")
 	public ResponseEntity<?> editCustomerContract(
@@ -254,5 +259,10 @@ public class CustomerController {
 			@RequestPart(value = "metaData", required = true) CustomerContractEditRequestDto editContractDto) {
 		return ResponseEntity.ok(customerUpdateService.updateCustomerContract(lastNameProof, companyProof, titleProof,
 				firstSalProof, dobProof, editContractDto));
+	}
+	
+	@PostMapping("/request-contract-cancellation")
+	public ResponseEntity<?> addCustomerCancellationRequest(@RequestBody CustomerContractCancellationRequestDto requestDto){
+		return ResponseEntity.ok(customerUpdateService.requestContractCancellation(requestDto));
 	}
 }

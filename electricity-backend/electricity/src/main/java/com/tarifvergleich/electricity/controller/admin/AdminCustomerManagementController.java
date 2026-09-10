@@ -17,6 +17,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarifvergleich.electricity.dto.CustomerAttornyDto;
 import com.tarifvergleich.electricity.dto.CustomerChangeDiscountRequestDto;
 import com.tarifvergleich.electricity.dto.CustomerConnectionRequestDto;
+import com.tarifvergleich.electricity.dto.CustomerContractCancellationRequestDto;
+import com.tarifvergleich.electricity.dto.CustomerContractEditRequestDto;
 import com.tarifvergleich.electricity.dto.CustomerDeliveryDto;
 import com.tarifvergleich.electricity.dto.CustomerDeliveryRequestWrapper.AdminEditCustomerDeliveryRelated;
 import com.tarifvergleich.electricity.dto.CustomerDetailsContactHistoryDto;
@@ -223,5 +225,19 @@ public class AdminCustomerManagementController {
 			@RequestBody CustomerChangeDiscountRequestDto changeDiscountRequestDto) {
 		return ResponseEntity.ok(
 				adminCustomerRequestManagementService.fetchCustomerChangeDiscountRequests(changeDiscountRequestDto));
+	}
+
+	@PostMapping("/fetch-all-customer-contract-edit-request")
+	public ResponseEntity<?> fetchAllCustomerContractEditRequests(
+			@RequestBody CustomerContractEditRequestDto editContractDto) {
+		return ResponseEntity
+				.ok(adminCustomerRequestManagementService.fetchCustomerCntractEditRequest(editContractDto));
+	}
+	
+	@PostMapping("/fetch-all-customer-contract-cancellation-request")
+	public ResponseEntity<?> fetchAllCustomerContractCancellationRequests(
+	        @RequestBody CustomerContractCancellationRequestDto cancellationDto) {
+	    return ResponseEntity
+	            .ok(adminCustomerRequestManagementService.fetchCustomerContractCancellationRequest(cancellationDto));
 	}
 }

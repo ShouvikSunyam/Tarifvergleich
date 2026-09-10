@@ -1,5 +1,6 @@
 package com.tarifvergleich.electricity.service.customer;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -13,15 +14,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tarifvergleich.electricity.dto.CustomerContractCancellationRequestDto;
 import com.tarifvergleich.electricity.dto.CustomerContractEditRequestDto;
 import com.tarifvergleich.electricity.dto.CustomerDto;
 import com.tarifvergleich.electricity.exception.InternalServerException;
 import com.tarifvergleich.electricity.model.Customer;
 import com.tarifvergleich.electricity.model.CustomerAddress;
+import com.tarifvergleich.electricity.model.CustomerContractCancellationCategory;
+import com.tarifvergleich.electricity.model.CustomerContractCancellationRequest;
 import com.tarifvergleich.electricity.model.CustomerContractEditOptions;
 import com.tarifvergleich.electricity.model.CustomerContractEditRequest;
 import com.tarifvergleich.electricity.model.CustomerDelivery;
+import com.tarifvergleich.electricity.model.CustomerRequestCounselling;
 import com.tarifvergleich.electricity.repository.CustomerAddressRepository;
+import com.tarifvergleich.electricity.repository.CustomerContractCancellationCategoryRepository;
+import com.tarifvergleich.electricity.repository.CustomerContractCancellationRequestRepository;
 import com.tarifvergleich.electricity.repository.CustomerContractEditOptionsRepository;
 import com.tarifvergleich.electricity.repository.CustomerContractEditRequestRepository;
 import com.tarifvergleich.electricity.repository.CustomerDeliveryRepository;
@@ -42,6 +49,8 @@ public class CustomerUpdateService {
 	private final CustomerContractEditOptionsRepository customerContractOptionsRepo;
 	private final FileServiceCustomer fileServiceCustomer;
 	private final ObjectMapper objectMapper;
+	private final CustomerContractCancellationRequestRepository cancellationRequestRepo;
+	private final CustomerContractCancellationCategoryRepository cancellationCategoryRepository;
 
 	@Transactional
 	public Map<String, Object> updateCustomerDetail(CustomerDto customerDto) {
@@ -120,8 +129,8 @@ public class CustomerUpdateService {
 	public Map<String, Object> updateCustomerContract(MultipartFile lastNameProof, MultipartFile companyProof,
 			MultipartFile titleProof, MultipartFile firstSalProof, MultipartFile dobProof,
 			CustomerContractEditRequestDto editContractDto) {
-		
-		if(editContractDto == null)
+
+		if (editContractDto == null)
 			throw new InternalServerException("Meta data missing", HttpStatus.OK);
 
 		if (editContractDto.getSelectedOption() == null || editContractDto.getSelectedOption().size() < 1)
@@ -228,5 +237,48 @@ public class CustomerUpdateService {
 		customerContractEditRequestRepo.saveAll(requests);
 
 		return Map.of("res", true, "message", "Request Submitted Successfully");
+	}
+
+	@Transactional
+	public Map<String, Object> requestContractCancellation(CustomerContractCancellationRequestDto requestDto) {
+
+		if (requestDto == null || requestDto.getDeliveryId() == null || requestDto.getDeliveryId() < 1
+				|| requestDto.getTerminationType() == null || requestDto.getTerminationType().isEmpty()
+				|| requestDto.getSelectedCategoryId() == null || requestDto.getSelectedCategoryId() < 1)
+			throw new InternalServerException("Insufficient data", HttpStatus.OK);
+
+		if (requestDto.getDesiredDate().isBefore(LocalDate.now(ZoneId.of("Europe/Berlin")))) {
+			throw new InternalServerException("Past time not allowed", HttpStatus.OK);
+		}
+
+		if (!requestDto.getTerminationType().toLowerCase().equals("ordinary termination")
+				&& !requestDto.getTerminationType().toLowerCase().equals("extraordinary termination"))
+			throw new InternalServerException("Invalid Termination Type", HttpStatus.OK);
+
+		CustomerDelivery delivery = customerDeliveryRepo.findById(requestDto.getDeliveryId())
+				.orElseThrow(() -> new InternalServerException("Customer order not found", HttpStatus.OK));
+
+		CustomerContractCancellationCategory category = cancellationCategoryRepository
+				.findById(requestDto.getSelectedCategoryId())
+				.orElseThrow(() -> new InternalServerException("Invalid Category", HttpStatus.OK));
+
+		CustomerRequestCounselling counsellingSchedule = CustomerRequestCounselling.builder()
+				.mobileNumber(requestDto.getMobileNumber()).weekDay(requestDto.getWeekDay().toUpperCase())
+				.customerOrder(delivery.getCustomerOrder())
+				.timeSlot(requestDto.getTimeSlot()).description(requestDto.getDescription()).build();
+
+		CustomerContractCancellationRequest request = CustomerContractCancellationRequest.builder()
+				.reason(requestDto.getReason())
+				.desiredDate(BigInteger
+						.valueOf(requestDto.getDesiredDate().atStartOfDay(ZoneId.of("Europe/Berlin")).toEpochSecond()))
+				.terminationType(requestDto.getTerminationType()).additionalInfo(requestDto.getAdditionalInfo())
+				.selectedCategory(category).customerDelivery(delivery).customer(delivery.getCustomerId())
+				.admin(delivery.getAdmin()).build();
+
+		request.addCounsellingRequest(counsellingSchedule);
+
+		cancellationRequestRepo.save(request);
+
+		return Map.of("res", true, "message", "Request saved successfully");
 	}
 }
