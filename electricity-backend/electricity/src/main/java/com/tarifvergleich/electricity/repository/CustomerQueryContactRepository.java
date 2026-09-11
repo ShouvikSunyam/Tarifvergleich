@@ -1,6 +1,9 @@
 package com.tarifvergleich.electricity.repository;
 
 import com.tarifvergleich.electricity.model.CustomerQueryContact;
+
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,4 +19,6 @@ public interface CustomerQueryContactRepository extends JpaRepository<CustomerQu
 	        @Param("isResolved") Boolean isResolved,
     		@Param("resolvedOn") java.math.BigInteger resolvedOn
     		);
+	
+	List<CustomerQueryContact> findAllByOrderByCreatedOnDesc();
 }

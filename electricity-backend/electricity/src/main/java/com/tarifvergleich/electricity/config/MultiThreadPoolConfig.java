@@ -1,6 +1,7 @@
 package com.tarifvergleich.electricity.config;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,4 +20,9 @@ public class MultiThreadPoolConfig {
 		executor.initialize();
 		return executor;
 	}
+	
+	@Bean(name = "virtualThreadExecutor")
+    public Executor virtualThreadExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
+    }
 }

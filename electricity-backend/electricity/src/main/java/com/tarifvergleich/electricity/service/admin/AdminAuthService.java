@@ -65,7 +65,8 @@ public class AdminAuthService {
 
 		adminUser.addLoginHistory(adminLoginHistory);
 		adminUser.setLastLogin(BigInteger.valueOf(Instant.now().getEpochSecond()));
-		return Map.of("res", true, "data", adminUserRepo.save(adminUser));
+		adminUserRepo.save(adminUser);
+		return Map.of("res", true, "data", Map.of("adminId", adminUser.getAdminId()));
 	}
 
 	@Transactional

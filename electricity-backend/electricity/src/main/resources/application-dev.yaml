@@ -32,6 +32,10 @@ spring:
           timeout: 15000
           writetimeout: 15000
 
+  thread:
+    virtual:
+      enable: true
+
 api:
   energy:
     url: https://gateway.eg-on.com

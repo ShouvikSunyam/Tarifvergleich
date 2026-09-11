@@ -1,15 +1,18 @@
 package com.tarifvergleich.electricity.dto.response;
 
-import com.tarifvergleich.electricity.dto.CustomerDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.math.BigInteger;
 import java.util.List;
 
-@Data
+import com.tarifvergleich.electricity.dto.CustomerDto.CustomerShortDetail;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,6 +30,6 @@ public class CustomerQueryContactResponseDTO {
     private BigInteger resolvedOn;
     private String categoryName;
     private Integer CategoryId;
-    private CustomerDto.CustomerShortDetail customer;
-    private List<CustomerDto.CustomerShortDetail> customers;
+    private CustomerShortDetail customer;
+    private List<CustomerShortDetail> customers;
 }

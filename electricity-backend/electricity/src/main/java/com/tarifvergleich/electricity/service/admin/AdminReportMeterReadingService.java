@@ -9,7 +9,6 @@ import com.tarifvergleich.electricity.dto.ReportMeterReadingDto.ReportMeterReadi
 import com.tarifvergleich.electricity.model.CustomerOrder;
 import com.tarifvergleich.electricity.model.ReportMeterReading;
 import com.tarifvergleich.electricity.repository.CustomerOrderRepository;
-import com.tarifvergleich.electricity.repository.CustomerRepository;
 import com.tarifvergleich.electricity.repository.ReportMeterReadingRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class AdminReportMeterReadingService {
 
 	private final ReportMeterReadingRepository reportMeterReadingRepository;
-	private final CustomerRepository customerRepository;
 	private final CustomerOrderRepository customerOrderRepository;
 
 	public List<ReportMeterReadingResponseForAdminDto> getAllMeterReadings() {

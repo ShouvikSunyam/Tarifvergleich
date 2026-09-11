@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -32,7 +31,6 @@ public class ServiceRequestEmailListener {
 	private final ManageAdminDocumentRepository adminDocumentRepo;
 	private final FileServiceSuperAdmin fileServiceSuperAdmin;
 
-	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void handleServiceRequestEmail(ServiceRequestEmailEvent event) {
 
@@ -47,7 +45,6 @@ public class ServiceRequestEmailListener {
 		mailService.sendMail(event.adminMail(), event.adminSub(), event.adminBody());
 	}
 
-	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void handleServiceResponseEmail(ServiceResponseEmailEvent event) {
 		if (event.docs() != null && !event.docs().isEmpty()) {
@@ -61,7 +58,6 @@ public class ServiceRequestEmailListener {
 		}
 	}
 
-	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void handleServiceAttrachmentForAcknowlegment(ServiceAttachmentMailOfAcknowledgement event) {
 

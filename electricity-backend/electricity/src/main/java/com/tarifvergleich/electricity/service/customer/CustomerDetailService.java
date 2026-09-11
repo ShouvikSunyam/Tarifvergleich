@@ -296,8 +296,9 @@ public class CustomerDetailService {
 			List<CustomerInvoiceRequestDto> invoiceDtoList = invoiceMap.getOrDefault(entity.getId(), List.of()).stream()
 					.map(inv -> CustomerInvoiceRequestDto.builder().id(inv.getId()).customerId(inv.getCustomerId())
 							.connectionId(inv.getConnectionId()).orderId(inv.getOrderId())
-							.deliveryId(inv.getDeliveryId()).invoiceCategory(inv.getEnergySupplierInvoiceCategory().getId())
-							.message(inv.getMessage()).status(inv.getStatus()).createdAt(inv.getCreatedAt()).build())
+							.deliveryId(inv.getDeliveryId())
+							.invoiceCategory(inv.getEnergySupplierInvoiceCategory().getId()).message(inv.getMessage())
+							.status(inv.getStatus()).createdAt(inv.getCreatedAt()).build())
 					.toList();
 
 			dto.setInvoiceRequests(invoiceDtoList);
@@ -323,9 +324,9 @@ public class CustomerDetailService {
 			dto.setDiscountRequests(discountDtoList);
 
 			// METER READING LIST
-			List<ReportMeterReadingDto> meterReadingDtoList = meterReadingMap.getOrDefault(entity.getId(), List.of())
-					.stream().map(reading -> {
-						
+			List<ReportMeterReadingDto> meterReadingDtoList = meterReadingMap.getOrDefault(entity, List.of()).stream()
+					.map(reading -> {
+
 						ReportMeterReadingDto meterDto = new ReportMeterReadingDto();
 
 						meterDto.setId(reading.getId());
@@ -428,7 +429,7 @@ public class CustomerDetailService {
 		CustomerServiceRequest customerServiceRequest = null;
 
 		if (serviceRequestDto.getServiceRequestId() == null || serviceRequestDto.getServiceRequestId() <= 0) {
-			
+
 			if (serviceRequestDto.getTitle() == null || serviceRequestDto.getTitle().isEmpty())
 				throw new InternalServerException("Title missing", HttpStatus.OK);
 
@@ -461,7 +462,7 @@ public class CustomerDetailService {
 		}
 
 		else {
-			
+
 			customerServiceRequest = customerServiceRequestRepo.findById(serviceRequestDto.getServiceRequestId())
 					.orElseThrow(
 							() -> new InternalServerException("Customer service request not found", HttpStatus.OK));
@@ -537,7 +538,6 @@ public class CustomerDetailService {
 //		String formattedDateTime = dateTimeMap.get("monthName").toString() + " " + dateTimeMap.get("date").toString()
 //				+ " " + dateTimeMap.get("year").toString() + ", at " + dateTimeMap.get("hour").toString() + ":"
 //				+ dateTimeMap.get("minute").toString() + " " + dateTimeMap.get("amPm").toString();
-
 
 		if (isReopened) {
 			customerSubject = "Ticket " + customerServiceRequest.getTicketNumber() + " Reopened";
@@ -756,7 +756,36 @@ public class CustomerDetailService {
 				.orElseThrow(
 						() -> new InternalServerException("Delivery not found with this credential", HttpStatus.OK));
 
-		delivery.setNotificationEnabled(!delivery.getNotificationEnabled());
+		Customer customer = delivery.getCustomerId();
+
+		CustomerOrder order = delivery.getCustomerOrder();
+
+		String orderOrDeliveryId = order != null && order.getOrderId() != null ? order.getOrderId().toString()
+				: delivery.getUniqueDeliveryId();
+
+		Boolean isNotificationEnabled = !delivery.getNotificationEnabled();
+
+		delivery.setNotificationEnabled(isNotificationEnabled);
+
+		if (!isNotificationEnabled) {
+			Map<String, Object> emailTemplate = emailBodyRender.emailNotificationDeactivationBody(customer,
+					orderOrDeliveryId);
+
+			Set<ManageAdminDocument> docs = new HashSet<ManageAdminDocument>();
+			if (emailTemplate.get("docs") instanceof Collection<?> rawCollection) {
+				for (Object obj : rawCollection) {
+					if (obj instanceof ManageAdminDocument doc) {
+						docs.add(doc);
+					}
+				}
+			}
+
+			ServiceResponseEmailEvent mailEvent = new ServiceResponseEmailEvent(customer.getEmail(),
+					"Deaktivierung von E-Mail-Benachrichtigungen für Ihre Bestellung",
+					emailTemplate.get("body").toString(), docs);
+
+			eventPublisher.publishEvent(mailEvent);
+		}
 
 		customerDeliveryRepo.save(delivery);
 

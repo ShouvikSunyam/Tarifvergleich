@@ -111,7 +111,7 @@ public class EmailBodyRender {
 				tempEmailBody);
 
 		HashMap<String, Object> response = new HashMap<String, Object>();
-		
+
 		response.put("body", emailBody);
 		response.put("title", title);
 		response.put("docs", adminEmailManagement.getDocuments());
@@ -378,6 +378,34 @@ public class EmailBodyRender {
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("body", emailBody);
 		response.put("title", title);
+		response.put("docs", adminEmailManagement.getDocuments());
+
+		return response;
+	}
+
+	public Map<String, Object> emailNotificationDeactivationBody(Customer customer, String orderId) {
+
+		if (customer == null)
+			throw new InternalServerException("Error creating email body", HttpStatus.OK);
+
+		AdminEmailManagement adminEmailManagement = adminEmailManagementRepo
+				.findByCategoryCategorySlugLike("%DEACTIVATING_EMAIL_REMINDER%")
+				.orElseThrow(() -> new InternalServerException("Error finding Email body", HttpStatus.OK));
+
+		String title = adminEmailManagement.getTitle().replace("{ORDER_NUMBER}", orderId);
+
+		String tempEmailBody = adminEmailManagement.getEmailContent();
+
+		tempEmailBody = tempEmailBody.replace("{SALUTATION}", customer.getSalutation());
+		tempEmailBody = tempEmailBody.replace("{CUSTOMER_NAME}", customer.getLastName());
+		tempEmailBody = tempEmailBody.replace("{ORDER_NUMBER}", orderId);
+
+		String emailBody = customEmailTemplate.generateEmailHtml(title, adminEmailManagement.getSubtitle(),
+				tempEmailBody);
+
+		HashMap<String, Object> response = new HashMap<String, Object>();
+		response.put("body", emailBody);
+		response.put("title", adminEmailManagement.getTitle());
 		response.put("docs", adminEmailManagement.getDocuments());
 
 		return response;

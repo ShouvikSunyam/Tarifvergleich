@@ -25,7 +25,8 @@ import com.tarifvergleich.electricity.util.Helper;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+//@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequiredArgsConstructor
 public class CustomerCronTask {
 
 	private final CustomerDeliveryRepository customerDeliveryRepo;
@@ -35,8 +36,14 @@ public class CustomerCronTask {
 	private final CustomerOrderRepository customerOrderRepo;
 	private final CustomerCronOrderService customerCronOrderService;
 
-	@Qualifier("orderStatusCronExecutor")
-	private final Executor orderStatusCronExecutor;
+//	@Qualifier("orderStatusCronExecutor")
+//	private final Executor orderStatusCronExecutor;
+//	
+//	@Qualifier("virtualThreadExecutor")
+//	private final Executor virtualThreadExecutor;
+	
+    private final Executor orderStatusCronExecutor;
+    private final Executor virtualThreadExecutor;
 
 	public Map<String, Object> sendExpiryNotification() {
 
